@@ -1,5 +1,5 @@
 ---
-name: [FEAT]
+name: "기능 구현"
 about: feature 이슈 템플릿
 title: ''
 labels: features

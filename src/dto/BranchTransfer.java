@@ -1,4 +1,4 @@
-package dao;
+package dto;
 //분관대출신청기록 테이블입니다
 
 public class BranchTransfer {
