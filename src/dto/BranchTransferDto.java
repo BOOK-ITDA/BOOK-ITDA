@@ -1,7 +1,7 @@
 package dto;
 //분관대출신청기록 테이블입니다
 
-public class BranchTransfer {
+public class BranchTransferDto {
     private int transfer_req_id;
     private int user_id;
     private int book_id;
@@ -10,7 +10,7 @@ public class BranchTransfer {
     private String status;
 
     // 전체 필드 생성자 (UPDATE, SELECT 시 사용)
-    public BranchTransfer(int transfer_req_id, int user_id, int book_id, int holding_lib_id, int pickup_lib_id, String status) {
+    public BranchTransferDto(int transfer_req_id, int user_id, int book_id, int holding_lib_id, int pickup_lib_id, String status) {
         this.transfer_req_id = transfer_req_id;
         this.user_id = user_id;
         this.book_id = book_id;
@@ -20,7 +20,7 @@ public class BranchTransfer {
     }
 
     // ID 없이 생성자 (INSERT 시 사용)
-    public BranchTransfer(int user_id, int book_id, int holding_lib_id, int pickup_lib_id, String status) {
+    public BranchTransferDto(int user_id, int book_id, int holding_lib_id, int pickup_lib_id, String status) {
         this.user_id = user_id;
         this.book_id = book_id;
         this.holding_lib_id = holding_lib_id;

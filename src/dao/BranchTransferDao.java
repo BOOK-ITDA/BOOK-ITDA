@@ -1,6 +1,6 @@
 package dao;
 
-import dto.BranchTransfer;
+import dto.BranchTransferDto;
 import repository.BranchTransferRepository;
 import database.DatabaseConnector;
 import java.sql.*;
@@ -8,11 +8,14 @@ import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
-
+//1. 분관대출 신청(회원) -> 콘솔창에 버튼 입력하면 해당 함수가 실행될 수 있도록(INSERT)
+//2. 분관대출 신청 상태 변경(사서) -> 콘솔창에 버튼 입력하면 해당 함수가 실행될 수 있도록(UPDATE)
+//3. 분관대출 목록 조회(회원-대시보드) -> 콘솔창에 버튼 입력하면 해당 함수가 실행될 수 있도록(SELECT)
+//4. 단건 조회 (신청ID 기준) -> 사서 처리 시 필요
 
 public class BranchTransferDao implements BranchTransferRepository {
     @Override
-    public int requestBranchTransfer(BranchTransfer bt) {
+    public int requestBranchTransfer(BranchTransferDto bt) {
         Connection conn = null;
         try {
             conn = DatabaseConnector.getConnection();
@@ -124,36 +127,37 @@ public class BranchTransferDao implements BranchTransferRepository {
     }
 
     @Override
-    public List<BranchTransfer> findByUserId(int userId) {
-            String sql =
-                    "SELECT transf_req_id, user_id, book_id, holding_lib_id, pickup_lib_id, status " +
-                            "FROM BRANCH_TRANSFER_REQUEST " +
-                            "WHERE user_id = ?";
+    public void findByUserId(int userId) {
+        String sql =
+                "SELECT bt.transf_req_id, b.name AS book_name, " +
+                        "hl.name AS holding_lib_name, pl.name AS pickup_lib_name, " +
+                        "bt.status " +
+                        "FROM BRANCH_TRANSFER_REQUEST bt " +
+                        "JOIN BOOK b ON bt.book_id = b.book_id " +
+                        "JOIN LIBRARY hl ON bt.holding_lib_id = hl.library_id " +
+                        "JOIN LIBRARY pl ON bt.pickup_lib_id = pl.library_id " +
+                        "WHERE bt.user_id = ?";
 
-            List<BranchTransfer> list = new ArrayList<>();
-            try (Connection conn = DatabaseConnector.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, userId);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    while (rs.next()) {
-                        list.add(new BranchTransfer(
-                                rs.getInt("transf_req_id"),
-                                rs.getInt("user_id"),
-                                rs.getInt("book_id"),
-                                rs.getInt("holding_lib_id"),
-                                rs.getInt("pickup_lib_id"),
-                                rs.getString("status")
-                        ));
-                    }
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    System.out.println("신청ID: " + rs.getInt("transf_req_id"));
+                    System.out.println("책 이름: " + rs.getString("book_name"));
+                    System.out.println("소장도서관: " + rs.getString("holding_lib_name"));
+                    System.out.println("수령도서관: " + rs.getString("pickup_lib_name"));
+                    System.out.println("상태: " + rs.getString("status"));
+                    System.out.println("---");
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
-            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public Optional<BranchTransfer> findById(int transferReqId) {
+    public Optional<BranchTransferDto> findById(int transferReqId) {
         String sql =
                 "SELECT transf_req_id, user_id, book_id, holding_lib_id, pickup_lib_id, status " +
                         "FROM BRANCH_TRANSFER_REQUEST " +
@@ -164,7 +168,7 @@ public class BranchTransferDao implements BranchTransferRepository {
             pstmt.setInt(1, transferReqId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(new BranchTransfer(
+                    return Optional.of(new BranchTransferDto(
                             rs.getInt("transf_req_id"),
                             rs.getInt("user_id"),
                             rs.getInt("book_id"),

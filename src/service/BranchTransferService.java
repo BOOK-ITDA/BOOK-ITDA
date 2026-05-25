@@ -1,8 +1,7 @@
 package service; // 패키지 확인해주세요
 
-import dto.BranchTransfer;
+import dto.BranchTransferDto;
 import repository.BranchTransferRepository;
-import java.util.List;
 import java.util.Optional;
 
 public class BranchTransferService {
@@ -14,7 +13,7 @@ public class BranchTransferService {
     }
 
     public int requestBranchTransfer(int userId, int bookId, int holdingLibId, int pickupLibId) {
-        BranchTransfer bt = new BranchTransfer(userId, bookId, holdingLibId, pickupLibId, "PROCESSING");
+        BranchTransferDto bt = new BranchTransferDto(userId, bookId, holdingLibId, pickupLibId, "PROCESSING");
         return branchTransferRepository.requestBranchTransfer(bt);
     }
 
@@ -22,11 +21,11 @@ public class BranchTransferService {
         return branchTransferRepository.updateStatus(transferReqId, status);
     }
 
-    public List<BranchTransfer> getMyBranchTransfers(int userId) {
-        return branchTransferRepository.findByUserId(userId);
+    public void getMyBranchTransfers(int userId) {
+        branchTransferRepository.findByUserId(userId);
     }
 
-    public Optional<BranchTransfer> getBranchTransfer(int transferReqId) {
+    public Optional<BranchTransferDto> getBranchTransfer(int transferReqId) {
         return branchTransferRepository.findById(transferReqId);
     }
 }
