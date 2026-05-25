@@ -20,8 +20,7 @@ public class BranchTransferDao implements BranchTransferRepository {
 
             // 도서 상태 확인
             String checkStatusSql =
-                    "SELECT status FROM COLLECTION " +
-                            "WHERE book_id = ? AND library_id = ?";
+                    "SELECT status FROM COLLECTION WHERE book_id = ? AND library_id = ?";
 
             try (PreparedStatement pstmt = conn.prepareStatement(checkStatusSql)) {
                 pstmt.setInt(1, bt.getBook_id());
@@ -75,8 +74,7 @@ public class BranchTransferDao implements BranchTransferRepository {
 
             // 소장도서관 테이블 상태 변경 -> 이후 소장도서관 테이블 관련 파일 만들어지면 추가 수정 예정
             String updateStatusSql =
-                    "UPDATE COLLECTION SET status = 'RESERVED' " +
-                            "WHERE book_id = ? AND library_id = ?";
+                    "UPDATE COLLECTION SET status = 'RESERVED' WHERE book_id = ? AND library_id = ?";
 
             try (PreparedStatement pstmt = conn.prepareStatement(updateStatusSql)) {
                 pstmt.setInt(1, bt.getBook_id());
