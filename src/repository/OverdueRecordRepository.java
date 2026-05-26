@@ -1,4 +1,5 @@
 package repository;
+import dto.OverdueRecordDto;
 
-public class OverdueRecordRepository {
+public interface OverdueRecordRepository {
 }

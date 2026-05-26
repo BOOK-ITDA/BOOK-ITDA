@@ -1,4 +1,5 @@
 package repository;
+import dto.LibraryDto;
 
-public class LibraryRepository {
+public interface LibraryRepository {
 }

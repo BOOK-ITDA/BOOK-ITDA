@@ -1,4 +1,7 @@
 package dao;
-
-public class OverdueRecordDao {
+import dto.OverdueRecordDto;
+import repository.OverdueRecordRepository;
+import database.DatabaseConnector;
+import java.sql.*;
+public class OverdueRecordDao implements OverdueRecordRepository {
 }

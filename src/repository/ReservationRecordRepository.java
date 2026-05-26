@@ -1,4 +1,5 @@
 package repository;
+import dto.ReservationRecordDto;
 
-public class ReservationRecordRepository {
+public interface ReservationRecordRepository {
 }

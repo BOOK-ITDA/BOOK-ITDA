@@ -1,4 +1,4 @@
 package repository;
-
-public class CollectionRepository {
+import dto.CollectionDto;
+public interface CollectionRepository {
 }

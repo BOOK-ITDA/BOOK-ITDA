@@ -1,4 +1,5 @@
 package repository;
+import dto.SmartLibraryDto;
 
-public class SmartLibraryRepository {
+public interface SmartLibraryRepository {
 }

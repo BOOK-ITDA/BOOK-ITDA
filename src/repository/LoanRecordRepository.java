@@ -1,4 +1,5 @@
 package repository;
+import dto.LoanRecordDto;
 
-public class LoanRecordRepository {
+public interface LoanRecordRepository {
 }
