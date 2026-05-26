@@ -23,6 +23,14 @@ public class SmartLibReqDto {
         this.status = status;
     }
 
+    public SmartLibReqDto(int user_id, int book_id, int library_id, int smart_lib_id, RequestStatus status) {
+        this.user_id = user_id;
+        this.book_id = book_id;
+        this.library_id = library_id;
+        this.smart_lib_id = smart_lib_id;
+        this.status = status;
+    }
+
     public int getSmt_req_id() {
         return smt_req_id;
     }

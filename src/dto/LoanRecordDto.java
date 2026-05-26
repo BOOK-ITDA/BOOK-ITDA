@@ -23,6 +23,18 @@ public class LoanRecordDto {
         this.extension_count = extension_count;
     }
 
+    public LoanRecordDto(int user_id, int book_id, int library_id, LocalDate loan_date, LocalDate due_date, LocalDate return_date, int extension_count) {
+        this.user_id = user_id;
+        this.book_id = book_id;
+        this.library_id = library_id;
+        this.loan_date = loan_date;
+        this.due_date = due_date;
+        this.return_date = return_date;
+        this.extension_count = extension_count;
+    }
+
+
+
     public int getLoan_id() {
         return loan_id;
     }
