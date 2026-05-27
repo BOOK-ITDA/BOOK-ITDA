@@ -127,7 +127,7 @@ public class BranchTransferDao implements BranchTransferRepository {
     }
 
     @Override
-    public void findByUserId(int userId) {
+    public void findByUserId(int userId) throws SQLException {
         String sql =
                 "SELECT bt.transf_req_id, b.name AS book_name, " +
                         "hl.name AS holding_lib_name, pl.name AS pickup_lib_name, " +
@@ -151,13 +151,11 @@ public class BranchTransferDao implements BranchTransferRepository {
                     System.out.println("---");
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
     @Override
-    public Optional<BranchTransferDto> findById(int transferReqId) {
+    public Optional<BranchTransferDto> findById(int transferReqId) throws SQLException {
         String sql =
                 "SELECT transf_req_id, user_id, book_id, holding_lib_id, pickup_lib_id, status " +
                         "FROM BRANCH_TRANSFER_REQUEST " +
@@ -178,8 +176,6 @@ public class BranchTransferDao implements BranchTransferRepository {
                     ));
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return Optional.empty();
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class StaffService {
     //사서와 관련된 기능
-    //1. 전체 회원 조회(비밀번호 제외) -> User
+    //1. 전체 회원 조회(비밀번호 제외) -> User(완료)
     //2. 분관대출 신청 상태 변경 -> BranchTransfer(완료)
     //3. 스마트도서관 신청 상태 변경 -> SmartLib
     //4. 연체 기록 상태 변경 -> OverdueRecord
@@ -17,14 +17,20 @@ public class StaffService {
 
     private final BranchTransferService BTService;
     private final UserService userService;
+    public final SmartLibReqService smartLibReqService;
 
-    public StaffService(BranchTransferService BTService, UserService userService) {
+    public StaffService(BranchTransferService BTService, UserService userService, SmartLibReqService smartLibReqService) {
         this.BTService = BTService;
         this.userService = userService;
+        this.smartLibReqService = smartLibReqService;
     }
 
-    public int updateBranchTransferStatus(int transferReqId, String status) {
+    public int updateBranchTransferStatus(int transferReqId, String status) throws SQLException {
         return BTService.updateStatus(transferReqId, status);
+    }
+
+    public int updateSmartLibReqStatus(int smartReqId, String status) throws SQLException {
+        return smartLibReqService.updateStatus(smartReqId, status);
     }
 
     public List<UserDto> findUserAll() throws SQLException {
