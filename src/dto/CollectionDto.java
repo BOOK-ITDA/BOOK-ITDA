@@ -1,17 +1,12 @@
 package dto;
 
 public class CollectionDto {
-    // 도서 상태 정의
-    public enum BookStatus {
-        AVAILABLE, BORROWED, RESERVED
-    };
-
     private int book_id;
     private int library_id;
-    private BookStatus status;
+    private String status;
 
     // 모든 속성을 포함하는 생성자
-    public CollectionDto(int book_id, int library_id, BookStatus status) {
+    public CollectionDto(int book_id, int library_id, String status) {
         this.book_id = book_id;
         this.library_id = library_id;
         this.status = status;
@@ -33,11 +28,11 @@ public class CollectionDto {
         this.library_id = library_id;
     }
 
-    public BookStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(BookStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }
