@@ -37,4 +37,18 @@ public class UserDao implements UserRepository {
         }
 
     }
+
+    @Override // 현재 대출 권수 감소하도록 업데이트하기 (-1)
+    public void decreaseLoanCount(Connection conn, int user_id) {
+        String sql = "UPDATE user SET loan_count = loan_count-1 WHERE user_id = ?";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setInt(1, user_id);
+            int affectedRow = pstmt.executeUpdate();
+            if (affectedRow == 0)
+                throw new SQLException("해당 회원 정보를 찾을 수 없습니다."); // 회원 정보를 찾을 수 없을 경우 처리
+        } catch(SQLException e){
+            System.out.println("DAO 에러 발생 : " + e.getMessage());
+            throw new RuntimeException("대출 권수 업데이트 중 DB 오류 발생",e);
+        }
+    }
 }
