@@ -1,8 +1,6 @@
 package repository;
 
 import dto.BranchTransferDto;
-
-import java.util.List;
 import java.util.Optional;
 
 public interface BranchTransferRepository {

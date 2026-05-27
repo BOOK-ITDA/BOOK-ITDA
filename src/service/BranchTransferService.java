@@ -1,4 +1,4 @@
-package service; // 패키지 확인해주세요
+package service;
 
 import dto.BranchTransferDto;
 import repository.BranchTransferRepository;

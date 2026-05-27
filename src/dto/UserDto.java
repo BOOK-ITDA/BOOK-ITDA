@@ -21,6 +21,16 @@ public class UserDto {
         this.password = password;
     }
 
+    //사서가 회원 목록 조회할 때 비번까지 조회하게 할수는 없어서 비밀번호 없는 생성자 추가
+    public UserDto(int user_id, String name, LocalDate birthdate, String phone_number, String address, int loan_count) {
+        this.user_id = user_id;
+        this.name = name;
+        this.birthdate = birthdate;
+        this.phone_number = phone_number;
+        this.address = address;
+        this.loan_count = loan_count;
+    }
+
     public int getUser_id() {
         return user_id;
     }
