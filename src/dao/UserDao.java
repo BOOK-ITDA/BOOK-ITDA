@@ -1,8 +1,7 @@
 package dao;
-import dto.UserDto;
 import repository.UserRepository;
-import database.DatabaseConnector;
 import java.sql.*;
+
 public class UserDao implements UserRepository {
     @Override // 현재 대출 권수 가져오기
     public int getLoanCount(Connection conn, int user_id) {
