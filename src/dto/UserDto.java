@@ -8,10 +8,10 @@ public class UserDto {
     private String phone_number;
     private String address;
     private int loan_count;
-    private int password;
+    private String password;
 
     // 모든 속성을 포함하는 생성자
-    public UserDto(int user_id, String name, LocalDate birthdate, String phone_number, String address, int loan_count, int password) {
+    public UserDto(int user_id, String name, LocalDate birthdate, String phone_number, String address, int loan_count, String password) {
         this.user_id = user_id;
         this.name = name;
         this.birthdate = birthdate;
@@ -69,11 +69,11 @@ public class UserDto {
         this.loan_count = loan_count;
     }
 
-    public int getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(int password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 }
