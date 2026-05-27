@@ -27,4 +27,32 @@ public class LoanRecordDao implements LoanRecordRepository {
             throw new RuntimeException("대출 기록 생성 중 DB 오류 발생",e);
         }
     }
+
+    @Override
+    public void increaseExtendCount(Connection conn, int loan_id) {
+        String sql = "UPDATE loan_record SET extension_count = extension_count+1 WHERE loan_id = ?";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setInt(1, loan_id);
+            int affectedRow = pstmt.executeUpdate();
+            if (affectedRow == 0)
+                throw new SQLException("해당 대출 기록 정보를 찾을 수 없습니다."); // 대출 기록 정보를 찾을 수 없을 경우 처리
+        } catch(SQLException e){
+            System.out.println("DAO 에러 발생 : " + e.getMessage());
+            throw new RuntimeException("연장 횟수 업데이트 중 DB 오류 발생",e);
+        }
+    }
+
+    @Override
+    public void updateDueDate(Connection conn, int loan_id) {
+        String sql = "UPDATE loan_record SET due_date = DATE_ADD(due_date, INTERVAL 7 DAY) WHERE loan_id = ?";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setInt(1, loan_id);
+            int affectedRow = pstmt.executeUpdate();
+            if (affectedRow == 0)
+                throw new SQLException("해당 대출 기록 정보를 찾을 수 없습니다."); // 대출 기록 정보를 찾을 수 없을 경우 처리
+        } catch(SQLException e){
+            System.out.println("DAO 에러 발생 : " + e.getMessage());
+            throw new RuntimeException("예정 반납 일자 업데이트 중 DB 오류 발생",e);
+        }
+    }
 }
