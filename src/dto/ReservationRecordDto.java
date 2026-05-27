@@ -2,16 +2,12 @@ package dto;
 import java.time.LocalDate;
 
 public class ReservationRecordDto {
-    // 도서 예약 상태 정의
-    public enum ReserveStatus {
-        PROCESSING, AVAILABLE
-    };
     private int reserve_id;
     private int user_id;
     private int book_id;
     private int library_id;
     private LocalDate reserve_date;
-    private ReserveStatus status;
+    private String status;
 
     // 모든 속성을 포함한 생성자
     ReservationRecordDto(int reserve_id, int user_id, int book_id, int library_id, LocalDate reserve_date, ReserveStatus status) {
@@ -74,11 +70,11 @@ public class ReservationRecordDto {
         this.reserve_date = reserve_date;
     }
 
-    public ReserveStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(ReserveStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

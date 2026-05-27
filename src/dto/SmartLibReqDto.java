@@ -1,20 +1,15 @@
 package dto;
 
 public class SmartLibReqDto {
-    // 스마트도서관 대출 신청 처리 상태
-    public enum RequestStatus {
-        PROCESSING, AVAILABLE
-    };
-
     private int smt_req_id;
     private int user_id;
     private int book_id;
     private int library_id;
     private int smart_lib_id;
-    private RequestStatus status;
+    private String status;
 
     // 모든 속성을 포함하는 생성자
-    public SmartLibReqDto(int smt_req_id, int user_id, int book_id, int library_id, int smart_lib_id, RequestStatus status) {
+    public SmartLibReqDto(int smt_req_id, int user_id, int book_id, int library_id, int smart_lib_id, String status) {
         this.smt_req_id = smt_req_id;
         this.user_id = user_id;
         this.book_id = book_id;
@@ -71,11 +66,11 @@ public class SmartLibReqDto {
         this.smart_lib_id = smart_lib_id;
     }
 
-    public RequestStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(RequestStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }
