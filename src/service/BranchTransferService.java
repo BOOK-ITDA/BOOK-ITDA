@@ -23,8 +23,4 @@ public class BranchTransferService {
     public void getMyBranchTransfers(int userId) throws SQLException {
         branchTransferReq.findByUserId(userId);
     }
-
-    public Optional<BranchTransferDto> getBranchTransfer(int transferReqId) throws SQLException {
-        return branchTransferReq.findById(transferReqId);
-    }
 }
