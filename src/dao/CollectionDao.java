@@ -21,7 +21,7 @@ public class CollectionDao implements CollectionRepository {
             }
         } catch (SQLException e) { // 데이터베이스 자체에 문제가 있을 경우 처리
             System.out.println("DAO 에러 발생 : " + e.getMessage());
-            throw new RuntimeException("도서 상태 업데이트 중 DB 오류 발생", e);
+            throw new RuntimeException("도서 상태 읽는 중 DB 오류 발생", e);
         }
 
     }
