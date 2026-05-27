@@ -13,8 +13,8 @@ public interface BranchTransferRepository {
     //3. 분관대출 목록 조회(회원-대시보드) -> 콘솔창에 버튼 입력하면 해당 함수가 실행될 수 있도록(SELECT)
 
     int requestBranchTransfer(BranchTransferDto bt) throws SQLException;
-    List<BranchTransferDto> getBranchTransfer();
-    int updateStatus(int transferReqId, String status) throws SQLException;
+    List<BranchTransferDto> getBranchTransfer() throws SQLException;
+    void updateStatus(int transferReqId) throws SQLException;
     void findByUserId(int userId) throws SQLException;
 
 }

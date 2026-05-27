@@ -9,8 +9,10 @@ public class BranchTransferDto {
     private int pickup_lib_id;
     private String status;
     private String book_name;
+    private String holding_lib_name;
+    private String pickup_lib_name;
 
-    public BranchTransferDto(int transfer_req_id, int user_id, int book_id, int holding_lib_id, int pickup_lib_id, String status, String book_name) {
+    public BranchTransferDto(int transfer_req_id, int user_id, int book_id, int holding_lib_id, int pickup_lib_id, String status, String book_name, String holding_lib_name, String pickup_lib_name) {
         this.transfer_req_id = transfer_req_id;
         this.user_id = user_id;
         this.book_id = book_id;
@@ -18,6 +20,8 @@ public class BranchTransferDto {
         this.pickup_lib_id = pickup_lib_id;
         this.status = status;
         this.book_name = book_name;
+        this.holding_lib_name = holding_lib_name;
+        this.pickup_lib_name = pickup_lib_name;
     }
 
     // 책 이름 제외 생성자 (UPDATE, SELECT 시 사용)
@@ -39,13 +43,15 @@ public class BranchTransferDto {
         this.status = status;
     }
 
-    public BranchTransferDto(int user_id, int book_id, int holding_lib_id, int pickup_lib_id, String status, String book_name) {
+    public BranchTransferDto(int user_id, int book_id, int holding_lib_id, int pickup_lib_id, String status, String book_name, String holding_lib_name, String pickup_lib_name) {
         this.user_id = user_id;
         this.book_id = book_id;
         this.holding_lib_id = holding_lib_id;
         this.pickup_lib_id = pickup_lib_id;
         this.status = status;
         this.book_name = book_name;
+        this.holding_lib_name = holding_lib_name;
+        this.pickup_lib_name = pickup_lib_name;
     }
 
     // Getters and Setters
@@ -63,5 +69,9 @@ public class BranchTransferDto {
     public void setStatus(String status) { this.status = status; }
     public String getBook_name() {return book_name;}
     public void setBook_name(String book_name) {this.book_name = book_name;}
+    public String getHolding_lib_name() {return holding_lib_name;}
+    public void setHolding_lib_name(String holding_lib_name) { this.holding_lib_name = holding_lib_name;}
+    public String getPickup_lib_name() {return pickup_lib_name;}
+    public void setPickup_lib_name(String pickup_lib_name) {this.pickup_lib_name = pickup_lib_name;}
 }
 

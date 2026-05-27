@@ -25,8 +25,7 @@ public class StaffService {
         this.smartLibReqService = smartLibReqService;
     }
 
-    public int updateBranchTransferStatus(int transferReqId, String status) throws SQLException {
-        return BTService.updateStatus(transferReqId, status);
+    public void updateBranchTransferStatus(int transferReqId) throws SQLException {
     }
 
     public int updateSmartLibReqStatus(int smartReqId, String status) throws SQLException {

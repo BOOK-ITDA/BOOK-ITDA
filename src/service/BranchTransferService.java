@@ -16,8 +16,7 @@ public class BranchTransferService {
         return branchTransferReq.requestBranchTransfer(bt);
     }
 
-    public int updateStatus(int transferReqId, String status) throws SQLException {
-        return branchTransferReq.updateStatus(transferReqId, status);
+    public void updateStatus(int transferReqId) throws SQLException {
     }
 
     public void getMyBranchTransfers(int userId) throws SQLException {

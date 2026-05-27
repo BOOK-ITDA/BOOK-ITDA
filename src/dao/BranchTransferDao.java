@@ -4,6 +4,7 @@ import dto.BranchTransferDto;
 import repository.BranchTransferRepository;
 import database.DatabaseConnector;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 //1. 분관대출 신청(회원) -> 콘솔창에 버튼 입력하면 해당 함수가 실행될 수 있도록(INSERT)
 //분관대출신청 dao -> insert만, 실제로 분관대출신청기록을 만드는데 필요한 모든것(도서관 선택+분관신청)은 service에서
@@ -45,23 +46,58 @@ public class BranchTransferDao implements BranchTransferRepository {
     }
 
     @Override
-    public List<BranchTransferDto> getBranchTransfer() { //여기서 사서가 분관대출신청목록을 조회 -> 여기에 분관대출신청건 아이디 조회 -> 아래 updateStatus dao에서 아이디를 입력하거나 넘겨줌(이건 서비스에서)
-        return List.of();
+    public List<BranchTransferDto> getBranchTransfer() throws SQLException {
+        //여기서 사서가 분관대출신청목록을 조회 -> 여기에 분관대출신청건 아이디 조회 -> 아래 updateStatus dao에서 아이디를 입력하거나 넘겨줌(이건 서비스에서)
+        String sql =
+                "SELECT btr.transfer_req_id, btr.user_id, btr.book_id, btr.holding_lib_id, btr.pickup_lib_id, btr.status, " +
+                        "       b.title AS book_name, " +
+                        "       hl.name AS holding_lib_name, " +
+                        "       pl.name AS pickup_lib_name " +
+                        "FROM BRANCH_TRANSFER_REQUEST btr " +
+                        "JOIN BOOK b ON btr.book_id = b.book_id " +
+                        "JOIN LIBRARY hl ON btr.holding_lib_id = hl.library_id " +
+                        "JOIN LIBRARY pl ON btr.pickup_lib_id = pl.library_id";
+
+        List<BranchTransferDto> list = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                BranchTransferDto bt = new BranchTransferDto(
+                        rs.getInt("transfer_req_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("book_id"),
+                        rs.getInt("holding_lib_id"),
+                        rs.getInt("pickup_lib_id"),
+                        rs.getString("status"),
+                        rs.getString("book_name"),
+                        rs.getString("holding_lib_name"),
+                        rs.getString("pickup_lib_name")
+                );
+                list.add(bt);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("분관대출 신청 목록 조회 중 오류 발생", e);
+        }
+
+        return list;
     }
 
     @Override
-    public int updateStatus(int transferReqId, String status) throws SQLException {
+    public void updateStatus(int transferReqId) throws SQLException {
         String sql =
-                "UPDATE BRANCH_TRANSFER_REQUEST SET status = ? " +
+                "UPDATE BRANCH_TRANSFER_REQUEST SET status = 'AVAILABLE' " +
                         "WHERE transf_req_id = ?";
 
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, status);
-            pstmt.setInt(2, transferReqId);
+            pstmt.setInt(1, transferReqId);
             int rows = pstmt.executeUpdate();
-            System.out.println("상태 변경 완료: " + status);
-            return rows;
+            System.out.println("상태 변경 완료");
         }
     }
 
