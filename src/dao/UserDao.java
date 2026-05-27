@@ -1,4 +1,5 @@
 package dao;
+import dto.UserDto;
 import repository.UserRepository;
 import java.sql.*;
 
@@ -49,6 +50,30 @@ public class UserDao implements UserRepository {
         } catch(SQLException e){
             System.out.println("DAO 에러 발생 : " + e.getMessage());
             throw new RuntimeException("대출 권수 업데이트 중 DB 오류 발생",e);
+        }
+    }
+
+    @Override // 회원 데이터 삽입 (현재 대출 권수는 데이터베이스 기본값으로 지정)
+    public int insertUser(Connection conn, UserDto dto) {
+        String sql = "INSERT INTO user (name, birthdate, phone_number, address, password) VALUES (?, ?, ?, ?, ?)";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+            pstmt.setString(1, dto.getName());
+            pstmt.setDate(2, java.sql.Date.valueOf(dto.getBirthdate()));
+            pstmt.setString(3, dto.getPhone_number());
+            pstmt.setString(4, dto.getAddress());
+            pstmt.setString(5, dto.getPassword());
+
+            pstmt.executeUpdate();
+            try(ResultSet generatedKeys = pstmt.getGeneratedKeys()){
+                if(generatedKeys.next()){
+                    int user_id = generatedKeys.getInt(1);
+                    dto.setUser_id(user_id);
+                    return user_id;
+                } else throw new SQLException("생성된 ID를 가져올 수 없습니다.");
+            }
+        } catch(SQLException e){
+            System.out.println("DAO 에러 발생 : " + e.getMessage());
+            throw new RuntimeException("회원 기록 생성 중 DB 오류 발생",e);
         }
     }
 }
