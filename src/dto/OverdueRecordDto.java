@@ -14,7 +14,7 @@ public class OverdueRecordDto {
     private String due_date;    // LOAN_RECORD.due_date
 
     // 모든 속성을 포함하는 생성자
-    public OverdueRecordDto(int overdue_id, int loan_id, int fine_amount, boolean is_paid) {
+    OverdueRecordDto(int overdue_id, int loan_id, int fine_amount, boolean is_paid) {
         this.overdue_id = overdue_id;
         this.loan_id = loan_id;
         this.fine_amount = fine_amount;
