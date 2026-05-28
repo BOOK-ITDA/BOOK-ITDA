@@ -8,6 +8,31 @@ public class SmartLibReqDto {
     private int smart_lib_id;
     private String status;
 
+    // JOIN 조회용 필드 (DB 컬럼 아님)
+    private String book_name;
+    private String smart_lib_name;
+
+    // INSERT용 생성자 (id 제외)
+    public SmartLibReqDto(int user_id, int book_id, int library_id, int smart_lib_id) {
+        this.user_id = user_id;
+        this.book_id = book_id;
+        this.library_id = library_id;
+        this.smart_lib_id = smart_lib_id;
+    }
+
+    // 전체 필드 생성자 (SELECT용)
+    public SmartLibReqDto(int smt_req_id, int user_id, int book_id, int library_id,
+                          int smart_lib_id, String status, String book_name, String smart_lib_name) {
+        this.smt_req_id = smt_req_id;
+        this.user_id = user_id;
+        this.book_id = book_id;
+        this.library_id = library_id;
+        this.smart_lib_id = smart_lib_id;
+        this.status = status;
+        this.book_name = book_name;
+        this.smart_lib_name = smart_lib_name;
+    }
+
     // 모든 속성을 포함하는 생성자
     public SmartLibReqDto(int smt_req_id, int user_id, int book_id, int library_id, int smart_lib_id, String status) {
         this.smt_req_id = smt_req_id;
@@ -65,4 +90,10 @@ public class SmartLibReqDto {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public String getBook_name() { return book_name; }
+    public void setBook_name(String book_name) { this.book_name = book_name; }
+    public String getSmart_lib_name() { return smart_lib_name; }
+    public void setSmart_lib_name(String smart_lib_name) { this.smart_lib_name = smart_lib_name; }
+}
 }
