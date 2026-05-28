@@ -27,6 +27,28 @@ public class OverdueRecordDao implements OverdueRecordRepository {
     }
 
     @Override
+    public void insertOverdueRecord(Connection conn) throws SQLException {
+        // 연체 기록 저장 (연체료, 연체료 납부 여부 기본 값 처리
+        // -> 바로 연체료 업데이트 메서드 사용할 예정이라 삽입할 때는 연체료 0 이어도 괜찮아요.
+        // 새 연체 기록이 여러 건 생성될 수 있음 + 사용자 관여 X 로직이기 때문에 DTO 사용 X
+        String sql = "INSERT INTO overdue_record (loan_id) " +
+                "SELECT loan_id FROM loan_record " +
+                "WHERE return_date IS NULL AND due_date < CURDATE() " +
+                "AND loan_id NOT IN (SELECT loan_id FROM overdue_record)";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            int affectedRow = pstmt.executeUpdate();
+            System.out.println("금일 신규 등록된 연체 기록 개수 : " + affectedRow);
+        }
+    }
+
+    @Override // 연체료 업데이트 (일간 업데이트)
+    public void updateDailyFineAmount(Connection conn) throws SQLException {
+        String sql = "UPDATE overdue_record SET fine_amount = fine_amount + 100 " +
+                "WHERE is_paid = 0";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            int affectedRow = pstmt.executeUpdate();
+            System.out.println("누적 연체료 갱신 완료 : " + affectedRow);
+        }
     public List<OverdueRecordDto> getOverdue() throws SQLException {
         //사서 연체 기록 조회 기능
 
