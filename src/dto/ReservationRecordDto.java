@@ -9,6 +9,20 @@ public class ReservationRecordDto {
     private LocalDate reserve_date;
     private String status;
 
+    // JOIN 조회용 필드 추가 (DB 컬럼 아님, SELECT 결과 담는 용도)
+    private String book_name;
+    private String library_name;
+
+    // JOIN 조회용 생성자 추가 (findByUserId에서 사용)
+    public ReservationRecordDto(int reserve_id, String book_name, String library_name,
+                                LocalDate reserve_date, String status) {
+        this.reserve_id = reserve_id;
+        this.book_name = book_name;
+        this.library_name = library_name;
+        this.reserve_date = reserve_date;
+        this.status = status;
+    }
+
     public int getReserve_id() {
         return reserve_id;
     }
@@ -65,7 +79,12 @@ public class ReservationRecordDto {
         this.library_id = library_id;
         this.reserve_date = reserve_date;
         this.status = status;
-
-
     }
+
+    // 추가된 getter/setter
+    public String getBook_name() { return book_name; }
+    public void setBook_name(String book_name) { this.book_name = book_name; }
+    public String getLibrary_name() { return library_name; }
+    public void setLibrary_name(String library_name) { this.library_name = library_name; }
+}
 }
