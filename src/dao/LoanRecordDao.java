@@ -1,7 +1,12 @@
 package dao;
+
 import dto.LoanRecordDto;
 import repository.LoanRecordRepository;
 import database.DatabaseConnector;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +31,36 @@ public class LoanRecordDao implements LoanRecordRepository {
                 rs.getInt("extension_count")
         );
     }
+
+    @Override
+    public void findRecord(int userId) throws SQLException {
+        String sql = "SELECT lr.loan_id, lr.loan_date, lr.due_date, lr.return_date, lr.extension, " +
+                "b.name AS book_title, " +
+                "lib.name AS library_name " +
+                "FROM LOAN_RECORD lr " +
+                "JOIN BOOK b ON lr.book_id = b.book_id " +
+                "JOIN LIBRARY lib ON lr.library_id = lib.library_id " +
+                "WHERE lr.user_id = ?";
+
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    System.out.println("대출ID: " + rs.getInt("loan_id"));
+                    System.out.println("책 이름: " + rs.getString("book_title"));
+                    System.out.println("도서관: " + rs.getString("library_name"));
+                    System.out.println("대출일: " + rs.getString("loan_date"));
+                    System.out.println("반납기한: " + rs.getString("due_date"));
+                    System.out.println("반납일: " + rs.getString("return_date"));
+                    System.out.println("연장횟수: " + rs.getInt("extension"));
+                    System.out.println("----------------------");
+                }
+            }
+        }
+    }
+
 
     @Override // 대출기록 삽입 (실제 반납일자, 연장 횟수는 데이터베이스 기본값으로 저장)
     public int insertLoanRecord(Connection conn, LoanRecordDto dto) {
@@ -108,6 +143,111 @@ public class LoanRecordDao implements LoanRecordRepository {
         }
         return list;
     }
+
+    public boolean returnBook(int loanId, int userId) {
+        //반납하기(회원)
+        //서비스 -> 대출 기록 조회 -> scanner로 반납할 대출기록번호 입력 기능 추가
+        Connection conn = null;
+        try {
+            conn = DatabaseConnector.getConnection();
+            conn.setAutoCommit(false); // 트랜잭션 시작
+
+            // 1. 대출기록 -> 도서관&도서 id 가져오기
+            String findLoanSql =
+                    "SELECT book_id, library_id FROM LOAN_RECORD " +
+                            "WHERE loan_id = ? AND user_id = ? AND return_date IS NULL";
+
+            int bookId = -1;
+            int libraryId = -1;
+            try (PreparedStatement pstmt = conn.prepareStatement(findLoanSql)) {
+                pstmt.setInt(1, loanId);
+                pstmt.setInt(2, userId);
+                ResultSet rs = pstmt.executeQuery();
+                if (!rs.next()) {
+                    conn.rollback();
+                    return false; // 대출 기록 없거나 이미 반납됨
+                }
+                bookId = rs.getInt("book_id");
+                libraryId = rs.getInt("library_id");
+            }
+
+            // 2. 반납일 기록
+            String updateLoanSql =
+                    "UPDATE LOAN_RECORD SET return_date = CURDATE() WHERE loan_id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(updateLoanSql)) {
+                pstmt.setInt(1, loanId);
+                pstmt.executeUpdate();
+            }
+
+            // 3. 소장 테이블 상태 확인
+            String findCollectionSql =
+                    "SELECT status FROM COLLECTION WHERE book_id = ? AND library_id = ?";
+
+            String collectionStatus = null;
+            try (PreparedStatement pstmt = conn.prepareStatement(findCollectionSql)) {
+                pstmt.setInt(1, bookId);
+                pstmt.setInt(2, libraryId);
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    collectionStatus = rs.getString("status");
+                }
+            }
+
+            if ("BORROWED".equals(collectionStatus)) {
+                // 4-1. 단순 반납 -> 대출 가능으로 변경
+                String updateCollectionSql =
+                        "UPDATE COLLECTION SET status = 'AVAILABLE' " +
+                                "WHERE book_id = ? AND library_id = ?";
+                try (PreparedStatement pstmt = conn.prepareStatement(updateCollectionSql)) {
+                    pstmt.setInt(1, bookId);
+                    pstmt.setInt(2, libraryId);
+                    pstmt.executeUpdate();
+                }
+
+            } else if ("RESERVED".equals(collectionStatus)) {
+                // 4-2. 예약 테이블 확인
+                String findReserveSql =
+                        "SELECT reserve_id FROM RESERVATION_RECORD " +
+                                "WHERE book_id = ? AND library_id = ? AND status = 'PROCESSING'";
+
+                int reserveId = -1; // 예약자 없을 때
+                try (PreparedStatement pstmt = conn.prepareStatement(findReserveSql)) {
+                    pstmt.setInt(1, bookId);
+                    pstmt.setInt(2, libraryId);
+                    ResultSet rs = pstmt.executeQuery();
+                    if (rs.next()) {
+                        reserveId = rs.getInt("reserve_id");
+                    }
+                }
+
+                if (reserveId != -1) {
+                    // 일반 예약 반납 -> 예약 상태만 AVAILABLE, COLLECTION은 RESERVED 유지
+                    String updateReserveSql =
+                            "UPDATE RESERVATION_RECORD SET status = 'AVAILABLE' WHERE reserve_id = ?";
+                    try (PreparedStatement pstmt = conn.prepareStatement(updateReserveSql)) {
+                        pstmt.setInt(1, reserveId);
+                        pstmt.executeUpdate();
+                    }
+                }
+                // 예약자 없음 (분관/스마트 신청) -> 아무것도 안 함, COLLECTION RESERVED 유지
+            }
+
+            conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (conn != null) {
+                try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+            }
+        }
+    }
+}
 
     // ──────────────────────────────────────────────
     // 2. 현재 대출 중인 기록만 조회 (return_date = NULL)

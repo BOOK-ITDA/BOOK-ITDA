@@ -14,6 +14,12 @@ public class LibraryDto {
         this.address = address;
     }
 
+    public LibraryDto(int library_id, String name, String address) {
+        this.library_id = library_id;
+        this.name = name;
+        this.address = address;
+    }
+
     public int getLibrary_id() {
         return library_id;
     }

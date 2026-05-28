@@ -1,9 +1,12 @@
 package repository;
 import dto.UserDto;
-
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
 
 public interface UserRepository {
+    //회원 조회(사서)
+    List<UserDto> findUserAll() throws SQLException;
     // 회원 현재 대출 권수 받아오기 - 일반 대출
     int getLoanCount(Connection conn, int user_id);
     // 현재 대출 권수 1권 증가시키기 - 일반 대출

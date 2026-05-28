@@ -1,183 +1,153 @@
 package dao;
 
-import dto.BranchTransfer;
+import dto.BranchTransferDto;
 import repository.BranchTransferRepository;
 import database.DatabaseConnector;
 import java.sql.*;
-
-import java.util.List;
-import java.util.Optional;
 import java.util.ArrayList;
-
+import java.util.List;
+//1. 분관대출 신청(회원) -> 콘솔창에 버튼 입력하면 해당 함수가 실행될 수 있도록(INSERT)
+//분관대출신청 dao -> insert만, 실제로 분관대출신청기록을 만드는데 필요한 모든것(도서관 선택+분관신청)은 service에서
+//2. 분관대출 신청 상태 변경(사서) -> 콘솔창에 버튼 입력하면 해당 함수가 실행될 수 있도록(UPDATE)
+//3. 분관대출 목록 조회(회원-대시보드) -> 콘솔창에 버튼 입력하면 해당 함수가 실행될 수 있도록(SELECT)
 
 public class BranchTransferDao implements BranchTransferRepository {
     @Override
-    public int requestBranchTransfer(BranchTransfer bt) {
-        Connection conn = null;
-        try {
-            conn = DatabaseConnector.getConnection();
-            conn.setAutoCommit(false); // 트랜잭션.. 보완 필요
+    public int requestBranchTransfer(BranchTransferDto bt) throws SQLException { //분관 대출 신청 -> 나중에 전체적인 기능은 서비스에서 구현, 지금은 Insert 정도만!!
+        //도서 상태 확인(소장 테이블 dao) -> 연체 여부 확인(연체 기록 테이블 dao) -> 도서관 목록 확인 및 선택(도서관 테이블 dao)
+        // -> 분관대출 신청기록 생성 insert(여기서) -> 소장 테이블 상태 변경(reserved, 소장 테이블 dao)
+        //이 부분 insert 테스트 완료
+        String insertSql =
+                "INSERT INTO BRANCH_TRANSFER_REQUEST " +
+                        "(user_id, book_id, holding_lib_id, pickup_lib_id, status) " +
+                        "VALUES (?, ?, ?, ?, 'PROCESSING')";
 
-            // 도서 상태 확인
-            String checkStatusSql =
-                    "SELECT status FROM COLLECTION WHERE book_id = ? AND library_id = ?";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
 
-            try (PreparedStatement pstmt = conn.prepareStatement(checkStatusSql)) {
-                pstmt.setInt(1, bt.getBook_id());
-                pstmt.setInt(2, bt.getHolding_lib_id());
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (!rs.next() || !"AVAILABLE".equals(rs.getString("status"))) {
-                        conn.rollback();
-                        System.out.println("대출 불가");
-                        return 0;
-                    }
+            pstmt.setInt(1, bt.getUser_id());
+            pstmt.setInt(2, bt.getBook_id());
+            pstmt.setInt(3, bt.getHolding_lib_id());
+            pstmt.setInt(4, bt.getPickup_lib_id());
+            pstmt.executeUpdate();
+
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    bt.setTransf_req_id(generatedKeys.getInt(1));
                 }
             }
 
-            //연체료 미납 확인
-            String checkOverdueSql =
-                    "SELECT COUNT(*) AS overdue_count " +
-                            "FROM OVERDUE_RECORD o " +
-                            "JOIN LOAN_RECORD lr ON o.loan_id = lr.loan_id " +
-                            "WHERE lr.user_id = ? AND o.is_paid = 0";
-
-            try (PreparedStatement pstmt = conn.prepareStatement(checkOverdueSql)) {
-                pstmt.setInt(1, bt.getUser_id());
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next() && rs.getInt("overdue_count") > 0) {
-                        conn.rollback();
-                        System.out.println("대출 불가: 미납 연체료가 있습니다.");
-                        return 0;
-                    }
-                }
-            }
-
-            // 분관대출 신청 insert문
-            String insertSql =
-                    "INSERT INTO BRANCH_TRANSFER_REQUEST " +
-                            "(user_id, book_id, holding_lib_id, pickup_lib_id, status) " +
-                            "VALUES (?, ?, ?, ?, 'PROCESSING')";
-
-            try (PreparedStatement pstmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
-                pstmt.setInt(1, bt.getUser_id());
-                pstmt.setInt(2, bt.getBook_id());
-                pstmt.setInt(3, bt.getHolding_lib_id());
-                pstmt.setInt(4, bt.getPickup_lib_id());
-                pstmt.executeUpdate();
-
-                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        bt.setTransfer_req_id(generatedKeys.getInt(1));
-                    }
-                }
-            }
-
-            // 소장도서관 테이블 상태 변경 -> 이후 소장도서관 테이블 관련 파일 만들어지면 추가 수정 예정
-            String updateStatusSql =
-                    "UPDATE COLLECTION SET status = 'RESERVED' WHERE book_id = ? AND library_id = ?";
-
-            try (PreparedStatement pstmt = conn.prepareStatement(updateStatusSql)) {
-                pstmt.setInt(1, bt.getBook_id());
-                pstmt.setInt(2, bt.getHolding_lib_id());
-                pstmt.executeUpdate();
-            }
-
-            conn.commit(); // 전부 성공하면 커밋
-            System.out.println("분관대출 신청 완료! 신청ID: " + bt.getTransfer_req_id());
+            System.out.println("분관대출 신청 완료");
             return 1;
 
         } catch (SQLException e) {
-            try {
-                if (conn != null) conn.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
             e.printStackTrace();
-            throw new RuntimeException("분관대출 신청 중 오류 발생", e);
-        } finally {
-            try {
-                if (conn != null) conn.setAutoCommit(true); // 커넥션 반환 전 원복
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            throw new SQLException("분관대출 신청 중 오류 발생", e);
         }
     }
 
     @Override
-    public int updateStatus(int transferReqId, String status) {
-            String sql =
-                    "UPDATE BRANCH_TRANSFER_REQUEST SET status = ? " +
-                            "WHERE transf_req_id = ?";
-
-            try (Connection conn = DatabaseConnector.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, status);
-                pstmt.setInt(2, transferReqId);
-                int rows = pstmt.executeUpdate();
-                System.out.println("상태 변경 완료: " + status);
-                return rows;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return 0;
-            }
-    }
-
-    @Override
-    public List<BranchTransfer> findByUserId(int userId) {
-            String sql =
-                    "SELECT transf_req_id, user_id, book_id, holding_lib_id, pickup_lib_id, status " +
-                            "FROM BRANCH_TRANSFER_REQUEST " +
-                            "WHERE user_id = ?";
-
-            List<BranchTransfer> list = new ArrayList<>();
-            try (Connection conn = DatabaseConnector.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, userId);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    while (rs.next()) {
-                        list.add(new BranchTransfer(
-                                rs.getInt("transf_req_id"),
-                                rs.getInt("user_id"),
-                                rs.getInt("book_id"),
-                                rs.getInt("holding_lib_id"),
-                                rs.getInt("pickup_lib_id"),
-                                rs.getString("status")
-                        ));
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return list;
-    }
-
-    @Override
-    public Optional<BranchTransfer> findById(int transferReqId) {
+    public List<BranchTransferDto> getBranchTransfer() throws SQLException {
+        //여기서 사서가 분관대출신청목록을 조회 -> 여기에 분관대출신청건 아이디 조회 -> 아래 updateStatus dao에서 아이디를 입력하거나 넘겨줌(이건 서비스에서)
+        //테스트 완료
         String sql =
-                "SELECT transf_req_id, user_id, book_id, holding_lib_id, pickup_lib_id, status " +
-                        "FROM BRANCH_TRANSFER_REQUEST " +
+                "SELECT btr.transf_req_id, btr.user_id, btr.book_id, b.name AS book_name, " +
+                        "btr.holding_lib_id, hl.name AS holding_lib_name, btr.pickup_lib_id, pl.name AS pickup_lib_name, btr.status " +
+                        "FROM BRANCH_TRANSFER_REQUEST btr " +
+                        "JOIN BOOK b ON btr.book_id = b.book_id " +
+                        "JOIN LIBRARY hl ON btr.holding_lib_id = hl.library_id " +
+                        "JOIN LIBRARY pl ON btr.pickup_lib_id = pl.library_id";
+
+        List<BranchTransferDto> list = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                BranchTransferDto bt = new BranchTransferDto(
+                        rs.getInt("transf_req_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("book_id"),
+                        rs.getString("book_name"),
+                        rs.getInt("holding_lib_id"),
+                        rs.getString("holding_lib_name"),
+                        rs.getInt("pickup_lib_id"),
+                        rs.getString("pickup_lib_name"),
+                        rs.getString("status")
+                );
+                list.add(bt);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("분관대출 신청 목록 조회 중 오류 발생", e);
+        }
+
+        return list;
+    }
+
+    @Override
+    public void updateStatus(int transferReqId) throws SQLException {
+        //분관대출상태변경(사서)
+        //테스트 완료
+
+        String sql =
+                "UPDATE BRANCH_TRANSFER_REQUEST SET status = 'AVAILABLE' " +
                         "WHERE transf_req_id = ?";
 
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, transferReqId);
+            int rows = pstmt.executeUpdate();
+            System.out.println("상태 변경 완료");
+        }
+    }
+
+    @Override
+    public List<BranchTransferDto> findByUserId(int userId) throws SQLException { //분관대출기록 조회(회원)
+        //테스트 완료
+        String sql =
+                "SELECT bt.transf_req_id,  bt.user_id, bt.book_id, b.name AS book_name, " +
+                        "bt.holding_lib_id, hl.name AS holding_lib_name,  " +
+                        "bt.pickup_lib_id, pl.name AS pickup_lib_name, bt.status " +
+                        "FROM BRANCH_TRANSFER_REQUEST bt " +
+                        "JOIN BOOK b ON bt.book_id = b.book_id " +
+                        "JOIN LIBRARY hl ON bt.holding_lib_id = hl.library_id " +
+                        "JOIN LIBRARY pl ON bt.pickup_lib_id = pl.library_id " +
+                        "WHERE bt.user_id = ?";
+
+        List<BranchTransferDto> list = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
             try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return Optional.of(new BranchTransfer(
+                while (rs.next()) {
+                    BranchTransferDto bt = new BranchTransferDto(
                             rs.getInt("transf_req_id"),
                             rs.getInt("user_id"),
                             rs.getInt("book_id"),
+                            rs.getString("book_name"),
                             rs.getInt("holding_lib_id"),
+                            rs.getString("holding_lib_name"),
                             rs.getInt("pickup_lib_id"),
+                            rs.getString("pickup_lib_name"),
                             rs.getString("status")
-                    ));
+
+                    );
+                    list.add(bt);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new SQLException("분관대출 목록 조회 중 오류 발생", e);
         }
-        return Optional.empty();
 
+        return list;
     }
+
+
+
+
 }

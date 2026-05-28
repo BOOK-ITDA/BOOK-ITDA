@@ -1,4 +1,6 @@
 package repository;
+
+import java.sql.SQLException;
 import dto.LoanRecordDto;
 import java.util.List;
 import java.sql.Connection;
@@ -15,4 +17,6 @@ public interface LoanRecordRepository {
     void increaseExtendCount(Connection conn, int loan_id);
     // 예정 반납 일자 변경 - 연장하기
     void updateDueDate(Connection conn, int loan_id);
+    // 도서 반납하기(회원 -> 트랜잭션)
+    public boolean returnBook(int loanId, int userId);
 }

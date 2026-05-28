@@ -65,4 +65,55 @@ public class ReservationRecordDao implements ReservationRecordRepository {
 
         return list; // 예약 기록 없으면 빈 리스트 반환
     }
+
+    @Override
+    public List<ReservationRecordDto> getReservation() throws SQLException {
+        String sql = "SELECT rr.reserve_id, rr.user_id, rr.book_id, b.name, rr.library_id, rr.reserve_date, rr.status" +
+            "FROM RESERVATION_RECORD rr" +
+            "JOIN BOOK b ON rr.book_id = b.book_id";
+
+        List<ReservationRecordDto> list = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                ReservationRecordDto bt = new ReservationRecordDto(
+                        rs.getInt("reserve_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("book_id"),
+                        rs.getString("book_name"),
+                        rs.getInt("library_id"),
+                        rs.getDate("reserve_date").toLocalDate(),
+                        rs.getString("status")
+
+
+                );
+                list.add(bt);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("분관대출 신청 목록 조회 중 오류 발생", e);
+        }
+
+        return list;
+    }
+
+    @Override
+    public void updateStatus(int ReservationId) throws SQLException {
+        String sql = "UPDATE RESERVATION_RECORD SET status = 'AVAILABLE' " +
+                "WHERE reserve_id = ?";
+
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, ReservationId);
+            int rows = pstmt.executeUpdate();
+            System.out.println("상태 변경 완료");
+        }
+    }
+
+
+
+
 }
