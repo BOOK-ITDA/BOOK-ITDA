@@ -7,16 +7,18 @@ public class OverdueRecordDto {
     private int loan_id;
     private int fine_amount;
     private boolean is_paid;
+    private int user_id;
     private String user_name;
     private String book_name;
     private LocalDate due_date;
 
     // 모든 속성을 포함하는 생성자
-    public OverdueRecordDto(int overdue_id, int loan_id, int fine_amount, boolean is_paid, String user_name, String book_name, LocalDate due_date) {
+    public OverdueRecordDto(int overdue_id, int loan_id, int fine_amount, boolean is_paid, int user_id, String user_name, String book_name, LocalDate due_date) {
         this.overdue_id = overdue_id;
         this.loan_id = loan_id;
         this.fine_amount = fine_amount;
         this.is_paid = is_paid;
+        this.user_id = user_id;
         this.user_name = user_name;
         this.book_name = book_name;
         this.due_date = due_date;
@@ -71,4 +73,8 @@ public class OverdueRecordDto {
     public LocalDate getDue_date() {return due_date;}
 
     public void setDue_date(LocalDate due_date) {this.due_date = due_date;}
+
+    public int getUser_id() {return user_id;}
+
+    public void setUser_id(int user_id) {this.user_id = user_id;}
 }
