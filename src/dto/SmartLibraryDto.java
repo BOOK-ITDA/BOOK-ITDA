@@ -15,6 +15,12 @@ public class SmartLibraryDto {
         this.book_count = book_count;
     }
 
+    public SmartLibraryDto(int smart_lib_id, String name, String address) {
+        this.smart_lib_id = smart_lib_id;
+        this.name = name;
+        this.address = address;
+    }
+
     public int getSmart_lib_id() {
         return smart_lib_id;
     }

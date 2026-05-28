@@ -14,6 +14,12 @@ public class OverdueRecordDto {
         this.is_paid = is_paid;
     }
 
+    OverdueRecordDto(int loan_id, int fine_amount, boolean is_paid) {
+        this.loan_id = loan_id;
+        this.fine_amount = fine_amount;
+        this.is_paid = is_paid;
+    }
+
     public int getOverdue_id() {
         return overdue_id;
     }

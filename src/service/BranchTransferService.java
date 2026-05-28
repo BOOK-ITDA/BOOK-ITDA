@@ -1,32 +1,25 @@
-package service; // 패키지 확인해주세요
+package service;
 
-import dto.BranchTransfer;
+import dao.BranchTransferDao;
+import dto.BranchTransferDto;
 import repository.BranchTransferRepository;
-import java.util.List;
+
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class BranchTransferService {
 
-    private final BranchTransferRepository branchTransferRepository;
+    private final BranchTransferRepository branchTransferReq = new BranchTransferDao();
 
-    public BranchTransferService(BranchTransferRepository branchTransferRepository) {
-        this.branchTransferRepository = branchTransferRepository;
+    public int requestBranchTransfer(int userId, int bookId, int holdingLibId, int pickupLibId) throws SQLException {
+        BranchTransferDto bt = new BranchTransferDto(userId, bookId, holdingLibId, pickupLibId, "PROCESSING");
+        return branchTransferReq.requestBranchTransfer(bt);
     }
 
-    public int requestBranchTransfer(int userId, int bookId, int holdingLibId, int pickupLibId) {
-        BranchTransfer bt = new BranchTransfer(userId, bookId, holdingLibId, pickupLibId, "PROCESSING");
-        return branchTransferRepository.requestBranchTransfer(bt);
+    public void updateStatus(int transferReqId) throws SQLException {
     }
 
-    public int updateStatus(int transferReqId, String status) {
-        return branchTransferRepository.updateStatus(transferReqId, status);
-    }
-
-    public List<BranchTransfer> getMyBranchTransfers(int userId) {
-        return branchTransferRepository.findByUserId(userId);
-    }
-
-    public Optional<BranchTransfer> getBranchTransfer(int transferReqId) {
-        return branchTransferRepository.findById(transferReqId);
+    public void getMyBranchTransfers(int userId) throws SQLException {
+        branchTransferReq.findByUserId(userId);
     }
 }
