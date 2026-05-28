@@ -28,8 +28,7 @@ public class StaffService {
     public void updateBranchTransferStatus(int transferReqId) throws SQLException {
     }
 
-    public int updateSmartLibReqStatus(int smartReqId, String status) throws SQLException {
-        return smartLibReqService.updateStatus(smartReqId, status);
+    public void updateSmartLibReqStatus(int smartReqId) throws SQLException {
     }
 
     public List<UserDto> findUserAll() throws SQLException {
