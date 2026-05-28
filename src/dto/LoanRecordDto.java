@@ -10,6 +10,8 @@ public class LoanRecordDto {
     private LocalDate due_date;
     private LocalDate return_date;
     private int extension_count;
+    private String book_name;
+    private String library_name;
 
     // 전 속성 포함하는 생성자
     public LoanRecordDto(int loan_id, int user_id, int book_id, int library_id, LocalDate loan_date, LocalDate due_date, LocalDate return_date, int extension_count) {
@@ -28,6 +30,19 @@ public class LoanRecordDto {
         this.user_id = user_id;
         this.book_id = book_id;
         this.library_id = library_id;
+        this.loan_date = loan_date;
+        this.due_date = due_date;
+        this.return_date = return_date;
+        this.extension_count = extension_count;
+    }
+
+    // 조회 전용 생성자 (book_name, library_name 포함 / user_id, book_id 제외)
+    public LoanRecordDto(int loan_id, int library_id, String book_name, String library_name,
+                         LocalDate loan_date, LocalDate due_date, LocalDate return_date, int extension_count) {
+        this.loan_id = loan_id;
+        this.library_id = library_id;
+        this.book_name = book_name;
+        this.library_name = library_name;
         this.loan_date = loan_date;
         this.due_date = due_date;
         this.return_date = return_date;
@@ -97,4 +112,12 @@ public class LoanRecordDto {
     public void setExtension_count(int extension_count) {
         this.extension_count = extension_count;
     }
+
+    public String getBook_name() { return book_name;  }
+
+    public void setBook_name(String book_name) { this.book_name = book_name; }
+
+    public String getLibrary_name() { return library_name; }
+
+    public void setLibrary_name(String library_name) { this.library_name = library_name; }
 }
