@@ -9,7 +9,7 @@ import java.util.List;
 
 public class UserDao implements UserRepository {
     @Override
-    public List<UserDto> findUserAll() throws SQLException {
+    public List<UserDto> findUserAll() throws SQLException { //(사서) 회원 조회
         String sql = "SELECT u.user_id, u.name, u.birthdate, u.phone_number, u.address, u.loan_count " +
                 "FROM USER u";
 

@@ -100,7 +100,7 @@ public class LoanRecordDao implements LoanRecordRepository {
             conn = DatabaseConnector.getConnection();
             conn.setAutoCommit(false); // 트랜잭션 시작
 
-            //대출기록 -> 도서관&도서 id 가져오기
+            // 1. 대출기록 -> 도서관&도서 id 가져오기
             String findLoanSql =
                     "SELECT book_id, library_id FROM LOAN_RECORD " +
                             "WHERE loan_id = ? AND user_id = ? AND return_date IS NULL";
@@ -113,13 +113,13 @@ public class LoanRecordDao implements LoanRecordRepository {
                 ResultSet rs = pstmt.executeQuery();
                 if (!rs.next()) {
                     conn.rollback();
-                    return false;
+                    return false; // 대출 기록 없거나 이미 반납됨
                 }
                 bookId = rs.getInt("book_id");
                 libraryId = rs.getInt("library_id");
             }
 
-            // 반납일 기록
+            // 2. 반납일 기록
             String updateLoanSql =
                     "UPDATE LOAN_RECORD SET return_date = CURDATE() WHERE loan_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(updateLoanSql)) {
@@ -127,39 +127,57 @@ public class LoanRecordDao implements LoanRecordRepository {
                 pstmt.executeUpdate();
             }
 
-            // PROCESSING + 예약자 확인
-            String findReserveSql =
-                    "SELECT reserve_id FROM RESERVATION_RECORD " +
-                            "WHERE book_id = ? AND library_id = ? AND status = 'PROCESSING' ";
+            // 3. 소장 테이블 상태 확인
+            String findCollectionSql =
+                    "SELECT status FROM COLLECTION WHERE book_id = ? AND library_id = ?";
 
-            int reserveId = -1; //예약자가 없을 때
-            try (PreparedStatement pstmt = conn.prepareStatement(findReserveSql)) {
+            String collectionStatus = null;
+            try (PreparedStatement pstmt = conn.prepareStatement(findCollectionSql)) {
                 pstmt.setInt(1, bookId);
                 pstmt.setInt(2, libraryId);
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) {
-                    reserveId = rs.getInt("reserve_id");
+                    collectionStatus = rs.getString("status");
                 }
             }
 
-            // 예약 테이블 상태 변경(소장 테이블은 그대로 예약중)
-            if (reserveId != -1) {
-                String updateReserveSql =
-                        "UPDATE RESERVATION_RECORD SET status = 'AVAILABLE' WHERE reserve_id = ?";
-                try (PreparedStatement ps = conn.prepareStatement(updateReserveSql)) {
-                    ps.setInt(1, reserveId);
-                    ps.executeUpdate();
-                }
-            } else {
-                // 예약자 없으면 소장 테이블: 예약중 -> 대출 가능
+            if ("BORROWED".equals(collectionStatus)) {
+                // 4-1. 단순 반납 -> 대출 가능으로 변경
                 String updateCollectionSql =
                         "UPDATE COLLECTION SET status = 'AVAILABLE' " +
                                 "WHERE book_id = ? AND library_id = ?";
-                try (PreparedStatement ps = conn.prepareStatement(updateCollectionSql)) {
-                    ps.setInt(1, bookId);
-                    ps.setInt(2, libraryId);
-                    ps.executeUpdate();
+                try (PreparedStatement pstmt = conn.prepareStatement(updateCollectionSql)) {
+                    pstmt.setInt(1, bookId);
+                    pstmt.setInt(2, libraryId);
+                    pstmt.executeUpdate();
                 }
+
+            } else if ("RESERVED".equals(collectionStatus)) {
+                // 4-2. 예약 테이블 확인
+                String findReserveSql =
+                        "SELECT reserve_id FROM RESERVATION_RECORD " +
+                                "WHERE book_id = ? AND library_id = ? AND status = 'PROCESSING'";
+
+                int reserveId = -1; // 예약자 없을 때
+                try (PreparedStatement pstmt = conn.prepareStatement(findReserveSql)) {
+                    pstmt.setInt(1, bookId);
+                    pstmt.setInt(2, libraryId);
+                    ResultSet rs = pstmt.executeQuery();
+                    if (rs.next()) {
+                        reserveId = rs.getInt("reserve_id");
+                    }
+                }
+
+                if (reserveId != -1) {
+                    // 일반 예약 반납 -> 예약 상태만 AVAILABLE, COLLECTION은 RESERVED 유지
+                    String updateReserveSql =
+                            "UPDATE RESERVATION_RECORD SET status = 'AVAILABLE' WHERE reserve_id = ?";
+                    try (PreparedStatement pstmt = conn.prepareStatement(updateReserveSql)) {
+                        pstmt.setInt(1, reserveId);
+                        pstmt.executeUpdate();
+                    }
+                }
+                // 예약자 없음 (분관/스마트 신청) -> 아무것도 안 함, COLLECTION RESERVED 유지
             }
 
             conn.commit();
