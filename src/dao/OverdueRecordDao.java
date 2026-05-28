@@ -9,7 +9,6 @@ import java.util.List;
 
 public class OverdueRecordDao implements OverdueRecordRepository {
 
-    // 기존 메서드 — 보현 작성, 그대로 유지
     @Override
     public boolean hasUnpaidOverdue(Connection conn, int user_id) {
         String sql = "SELECT COUNT(*) FROM overdue_record o " +

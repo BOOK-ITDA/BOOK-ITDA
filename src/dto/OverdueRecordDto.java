@@ -21,7 +21,7 @@ public class OverdueRecordDto {
         this.is_paid = is_paid;
     }
 
-    // JOIN 조회용 생성자 — 희서 SELECT용 (public)
+    // JOIN 조회용 생성자
     public OverdueRecordDto(int overdue_id, int loan_id, int fine_amount, boolean is_paid,
                             String book_name, String loan_date, String due_date) {
         this.overdue_id = overdue_id;
@@ -66,7 +66,7 @@ public class OverdueRecordDto {
         this.is_paid = is_paid;
     }
 
-    // 추가 getter/setter
+    // 추가 필드 getter/setter
     public String getBook_name() { return book_name; }
     public void setBook_name(String book_name) { this.book_name = book_name; }
     public String getLoan_date() { return loan_date; }
