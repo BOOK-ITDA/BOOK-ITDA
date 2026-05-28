@@ -37,6 +37,7 @@ public class LoanRecordDao implements LoanRecordRepository {
                 }
             }
         }
+    }
 
 
     @Override // 대출기록 삽입 (실제 반납일자, 연장 횟수는 데이터베이스 기본값으로 저장)
