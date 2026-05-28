@@ -1,6 +1,5 @@
 package main;
 
-//여기에서 gui 등 기본 화면으로 사용할거에용!
 //일단 지금은 jdbc 연결하고 연결상태 확인하는 코드 넣어놨습니당.
 
 import database.DatabaseConnector;
