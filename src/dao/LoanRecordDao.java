@@ -91,4 +91,108 @@ public class LoanRecordDao implements LoanRecordRepository {
             throw new RuntimeException("예정 반납 일자 업데이트 중 DB 오류 발생",e);
         }
     }
+
+    public boolean returnBook(int loanId, int userId) {
+        //반납하기(회원)
+        //서비스 -> 대출 기록 조회 -> scanner로 반납할 대출기록번호 입력 기능 추가
+        Connection conn = null;
+        try {
+            conn = DatabaseConnector.getConnection();
+            conn.setAutoCommit(false); // 트랜잭션 시작
+
+            // 1. 대출기록 -> 도서관&도서 id 가져오기
+            String findLoanSql =
+                    "SELECT book_id, library_id FROM LOAN_RECORD " +
+                            "WHERE loan_id = ? AND user_id = ? AND return_date IS NULL";
+
+            int bookId = -1;
+            int libraryId = -1;
+            try (PreparedStatement pstmt = conn.prepareStatement(findLoanSql)) {
+                pstmt.setInt(1, loanId);
+                pstmt.setInt(2, userId);
+                ResultSet rs = pstmt.executeQuery();
+                if (!rs.next()) {
+                    conn.rollback();
+                    return false; // 대출 기록 없거나 이미 반납됨
+                }
+                bookId = rs.getInt("book_id");
+                libraryId = rs.getInt("library_id");
+            }
+
+            // 2. 반납일 기록
+            String updateLoanSql =
+                    "UPDATE LOAN_RECORD SET return_date = CURDATE() WHERE loan_id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(updateLoanSql)) {
+                pstmt.setInt(1, loanId);
+                pstmt.executeUpdate();
+            }
+
+            // 3. 소장 테이블 상태 확인
+            String findCollectionSql =
+                    "SELECT status FROM COLLECTION WHERE book_id = ? AND library_id = ?";
+
+            String collectionStatus = null;
+            try (PreparedStatement pstmt = conn.prepareStatement(findCollectionSql)) {
+                pstmt.setInt(1, bookId);
+                pstmt.setInt(2, libraryId);
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    collectionStatus = rs.getString("status");
+                }
+            }
+
+            if ("BORROWED".equals(collectionStatus)) {
+                // 4-1. 단순 반납 -> 대출 가능으로 변경
+                String updateCollectionSql =
+                        "UPDATE COLLECTION SET status = 'AVAILABLE' " +
+                                "WHERE book_id = ? AND library_id = ?";
+                try (PreparedStatement pstmt = conn.prepareStatement(updateCollectionSql)) {
+                    pstmt.setInt(1, bookId);
+                    pstmt.setInt(2, libraryId);
+                    pstmt.executeUpdate();
+                }
+
+            } else if ("RESERVED".equals(collectionStatus)) {
+                // 4-2. 예약 테이블 확인
+                String findReserveSql =
+                        "SELECT reserve_id FROM RESERVATION_RECORD " +
+                                "WHERE book_id = ? AND library_id = ? AND status = 'PROCESSING'";
+
+                int reserveId = -1; // 예약자 없을 때
+                try (PreparedStatement pstmt = conn.prepareStatement(findReserveSql)) {
+                    pstmt.setInt(1, bookId);
+                    pstmt.setInt(2, libraryId);
+                    ResultSet rs = pstmt.executeQuery();
+                    if (rs.next()) {
+                        reserveId = rs.getInt("reserve_id");
+                    }
+                }
+
+                if (reserveId != -1) {
+                    // 일반 예약 반납 -> 예약 상태만 AVAILABLE, COLLECTION은 RESERVED 유지
+                    String updateReserveSql =
+                            "UPDATE RESERVATION_RECORD SET status = 'AVAILABLE' WHERE reserve_id = ?";
+                    try (PreparedStatement pstmt = conn.prepareStatement(updateReserveSql)) {
+                        pstmt.setInt(1, reserveId);
+                        pstmt.executeUpdate();
+                    }
+                }
+                // 예약자 없음 (분관/스마트 신청) -> 아무것도 안 함, COLLECTION RESERVED 유지
+            }
+
+            conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (conn != null) {
+                try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+            }
+        }
+    }
 }

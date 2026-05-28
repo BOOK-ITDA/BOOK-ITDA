@@ -11,7 +11,7 @@ public class ReservationRecordDto {
     private String book_name;
 
     // 모든 속성을 포함한 생성자
-    public ReservationRecordDto(int reserve_id, int user_id, int book_id,String book_name, int library_id, LocalDate reserve_date, String status) {
+    public ReservationRecordDto(int reserve_id, int user_id, int book_id, String book_name, int library_id, LocalDate reserve_date, String status) {
         this.reserve_id = reserve_id;
         this.user_id = user_id;
         this.book_id = book_id;
@@ -28,27 +28,6 @@ public class ReservationRecordDto {
         this.library_id = library_id;
         this.reserve_date = reserve_date;
         this.status = status;
-    }
-
-    // 모든 속성을 포함한 생성자
-    ReservationRecordDto(int reserve_id, int user_id, int book_id, int library_id, LocalDate reserve_date, String status) {
-        this.reserve_id = reserve_id;
-        this.user_id = user_id;
-        this.book_id = book_id;
-        this.library_id = library_id;
-        this.reserve_date = reserve_date;
-        this.status = status;
-    }
-
-    // 모든 속성을 포함한 생성자
-    ReservationRecordDto(int user_id, int book_id, int library_id, LocalDate reserve_date, String status) {
-        this.user_id = user_id;
-        this.book_id = book_id;
-        this.library_id = library_id;
-        this.reserve_date = reserve_date;
-        this.status = status;
-
-
     }
 
     public int getReserve_id() {
