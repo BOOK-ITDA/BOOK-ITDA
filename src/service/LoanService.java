@@ -6,8 +6,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-import dto.CollectionDto.BookStatus;
-
 public class LoanService {
     // 인터페이스에 의존
     private final CollectionRepository collectionRepository;
@@ -29,8 +27,8 @@ public class LoanService {
                 conn.setAutoCommit(false);
 
                 // 도서 상태 확인
-                BookStatus bookStatus = collectionRepository.getStatus(conn, book_id, library_id);
-                if (bookStatus != BookStatus.AVAILABLE){
+                String bookStatus = collectionRepository.getStatus(conn, book_id, library_id);
+                if (!"AVAILABLE".equals(bookStatus)){
                     throw new IllegalStateException("대출 불가 : 해당 도서는 대출 가능하지 않습니다.");
                 }
 
@@ -52,7 +50,7 @@ public class LoanService {
                 LoanRecordDto newLoan = new LoanRecordDto(user_id, book_id, library_id, loan_date, due_date, null, 0);
                 int generatedLoanId = loanRecordRepository.insertLoanRecord(conn, newLoan);
 
-                collectionRepository.updateStatus(conn, book_id, library_id, BookStatus.BORROWED);
+                collectionRepository.updateStatus(conn, book_id, library_id, "BORROWED");
                 userRepository.increaseLoanCount(conn, user_id);
 
                 conn.commit();

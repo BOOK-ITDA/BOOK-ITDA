@@ -1,4 +1,5 @@
 package dao;
+import database.DatabaseConnector;
 import dto.UserDto;
 import repository.UserRepository;
 import java.sql.*;
