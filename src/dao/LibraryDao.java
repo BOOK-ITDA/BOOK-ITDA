@@ -8,7 +8,7 @@ import java.util.List;
 
 public class LibraryDao implements LibraryRepository {
     @Override
-    public List<LibraryDto> getLibList() throws SQLException {
+    public List<LibraryDto> getLibList() throws SQLException { // 추후 분관대출신청 서비스에서 사용할 도서관 목록 조회(테스트 완료)
         String sql = "SELECT library_id, name, address FROM LIBRARY";
         List<LibraryDto> libList = new ArrayList<>();
 

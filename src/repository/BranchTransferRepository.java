@@ -15,6 +15,6 @@ public interface BranchTransferRepository {
     int requestBranchTransfer(BranchTransferDto bt) throws SQLException;
     List<BranchTransferDto> getBranchTransfer() throws SQLException;
     void updateStatus(int transferReqId) throws SQLException;
-    void findByUserId(int userId) throws SQLException;
+    List<BranchTransferDto> findByUserId(int userId) throws SQLException;
 
 }

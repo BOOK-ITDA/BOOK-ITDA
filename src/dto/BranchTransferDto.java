@@ -12,16 +12,16 @@ public class BranchTransferDto {
     private String holding_lib_name;
     private String pickup_lib_name;
 
-    public BranchTransferDto(int transfer_req_id, int user_id, int book_id, int holding_lib_id, int pickup_lib_id, String status, String book_name, String holding_lib_name, String pickup_lib_name) {
+    public BranchTransferDto(int transfer_req_id, int user_id, int book_id, String book_name, int holding_lib_id, String holding_lib_name, int pickup_lib_id, String pickup_lib_name, String status) {
         this.transfer_req_id = transfer_req_id;
         this.user_id = user_id;
         this.book_id = book_id;
-        this.holding_lib_id = holding_lib_id;
-        this.pickup_lib_id = pickup_lib_id;
-        this.status = status;
         this.book_name = book_name;
+        this.holding_lib_id = holding_lib_id;
         this.holding_lib_name = holding_lib_name;
+        this.pickup_lib_id = pickup_lib_id;
         this.pickup_lib_name = pickup_lib_name;
+        this.status = status;
     }
 
     // 책 이름 제외 생성자 (UPDATE, SELECT 시 사용)
@@ -43,20 +43,20 @@ public class BranchTransferDto {
         this.status = status;
     }
 
-    public BranchTransferDto(int user_id, int book_id, int holding_lib_id, int pickup_lib_id, String status, String book_name, String holding_lib_name, String pickup_lib_name) {
+    public BranchTransferDto(int user_id, int book_id, String book_name, int holding_lib_id, String holding_lib_name, int pickup_lib_id, String pickup_lib_name, String status) {
         this.user_id = user_id;
         this.book_id = book_id;
-        this.holding_lib_id = holding_lib_id;
-        this.pickup_lib_id = pickup_lib_id;
-        this.status = status;
         this.book_name = book_name;
+        this.holding_lib_id = holding_lib_id;
         this.holding_lib_name = holding_lib_name;
+        this.pickup_lib_id = pickup_lib_id;
         this.pickup_lib_name = pickup_lib_name;
+        this.status = status;
     }
 
     // Getters and Setters
-    public int getTransfer_req_id() { return transfer_req_id; }
-    public void setTransfer_req_id(int transfer_req_id) { this.transfer_req_id = transfer_req_id; }
+    public int getTransf_req_id() { return transfer_req_id; }
+    public void setTransf_req_id(int transfer_req_id) { this.transfer_req_id = transfer_req_id; }
     public int getUser_id() { return user_id; }
     public void setUser_id(int user_id) { this.user_id = user_id; }
     public int getBook_id() { return book_id; }

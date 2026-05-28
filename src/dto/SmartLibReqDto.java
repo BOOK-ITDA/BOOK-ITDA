@@ -18,7 +18,7 @@ public class SmartLibReqDto {
         this.status = status;
     }
 
-    public SmartLibReqDto(int user_id, int book_id, int library_id, int smart_lib_id, RequestStatus status) {
+    public SmartLibReqDto(int user_id, int book_id, int library_id, int smart_lib_id, String status) {
         this.user_id = user_id;
         this.book_id = book_id;
         this.library_id = library_id;
