@@ -1,7 +1,6 @@
 package dao;
 
 import dto.BookDto;
-import dto.BookSearchResultDto;
 import repository.BookRepository;
 import database.DatabaseConnector;
 
@@ -12,20 +11,17 @@ import java.util.List;
 public class BookDao implements BookRepository {
 
     // ─────────────────────────────────────────────
-    // 공통: ResultSet → BookSearchResultDto 변환
     // 3개 함수 모두 SELECT 컬럼이 동일하므로 중복 제거용 private 메서드
     // ─────────────────────────────────────────────
-    private List<BookSearchResultDto> executeSearch(Connection conn, String sql, String keyword) {
-        List<BookSearchResultDto> results = new ArrayList<>();
-        String likeKeyword = "%" + keyword + "%";  // LIKE 패턴 조립
+    private List<BookDto> executeSearch(Connection conn, String sql, String keyword) {
+        List<BookDto> results = new ArrayList<>();
+        String likeKeyword = "%" + keyword + "%";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, likeKeyword);  // WHERE 조건 1개만 바인딩
-
+            pstmt.setString(1, likeKeyword);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    results.add(new BookSearchResultDto(
+                    results.add(new BookDto(
                             rs.getInt("book_id"),
                             rs.getString("name"),
                             rs.getString("author"),
@@ -36,10 +32,8 @@ public class BookDao implements BookRepository {
                     ));
                 }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
-            // 예외 발생 시 빈 리스트 반환 (호출부에서 빈 리스트 처리)
         }
 
         return results;
@@ -50,14 +44,14 @@ public class BookDao implements BookRepository {
     // WHERE b.name LIKE '%keyword%'
     // ─────────────────────────────────────────────
     @Override
-    public List<BookSearchResultDto> findByTitle(String keyword) {
-        String sql = "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
-                     "       l.name AS library_name, c.status " +
-                     "FROM BOOK b " +
-                     "JOIN COLLECTION c ON b.book_id = c.book_id " +
-                     "JOIN LIBRARY l    ON c.library_id = l.library_id " +
-                     "WHERE b.name LIKE ?";
-
+    public List<BookDto> findByTitle(Connection conn, String keyword) {
+        String sql =
+                "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
+                        "       l.name AS library_name, c.status " +
+                        "FROM BOOK b " +
+                        "JOIN COLLECTION c ON b.book_id = c.book_id " +
+                        "JOIN LIBRARY l    ON c.library_id = l.library_id " +
+                        "WHERE b.name LIKE ?";
         return executeSearch(conn, sql, keyword);
     }
 
@@ -66,14 +60,14 @@ public class BookDao implements BookRepository {
     // WHERE b.author LIKE '%keyword%'
     // ─────────────────────────────────────────────
     @Override
-    public List<BookSearchResultDto> findByAuthor(Connection conn, String keyword) {
-        String sql = "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
-                     "       l.name AS library_name, c.status " +
-                     "FROM BOOK b " +
-                     "JOIN COLLECTION c ON b.book_id = c.book_id " +
-                     "JOIN LIBRARY l    ON c.library_id = l.library_id " +
-                     "WHERE b.author LIKE ?";
-
+    public List<BookDto> findByAuthor(Connection conn, String keyword) {
+        String sql =
+                "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
+                        "       l.name AS library_name, c.status " +
+                        "FROM BOOK b " +
+                        "JOIN COLLECTION c ON b.book_id = c.book_id " +
+                        "JOIN LIBRARY l    ON c.library_id = l.library_id " +
+                        "WHERE b.author LIKE ?";
         return executeSearch(conn, sql, keyword);
     }
 
@@ -82,14 +76,14 @@ public class BookDao implements BookRepository {
     // WHERE b.genre LIKE '%keyword%'
     // ─────────────────────────────────────────────
     @Override
-    public List<BookSearchResultDto> findByGenre(Connection conn, String keyword) {
-        String sql = "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
-                     "       l.name AS library_name, c.status " +
-                     "FROM BOOK b " +
-                     "JOIN COLLECTION c ON b.book_id = c.book_id " +
-                     "JOIN LIBRARY l    ON c.library_id = l.library_id " +
-                     "WHERE b.genre LIKE ?";
-
+    public List<BookDto> findByGenre(Connection conn, String keyword) {
+        String sql =
+                "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
+                        "       l.name AS library_name, c.status " +
+                        "FROM BOOK b " +
+                        "JOIN COLLECTION c ON b.book_id = c.book_id " +
+                        "JOIN LIBRARY l    ON c.library_id = l.library_id " +
+                        "WHERE b.genre LIKE ?";
         return executeSearch(conn, sql, keyword);
     }
 }
