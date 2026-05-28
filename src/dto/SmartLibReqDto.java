@@ -13,6 +13,7 @@ public class SmartLibReqDto {
     private String smart_lib_name;
 
     // INSERT용 생성자 (id 제외)
+    // smt_req_id → AUTO_INCREMENT, status → DB 기본값 'PROCESSING'
     public SmartLibReqDto(int user_id, int book_id, int library_id, int smart_lib_id) {
         this.user_id = user_id;
         this.book_id = book_id;

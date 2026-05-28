@@ -1,12 +1,15 @@
 package repository;
+
 import dto.SmartLibraryDto;
+import java.sql.Connection;
+import java.util.List;
 
 public interface SmartLibraryRepository {
 
-    // 스마트도서관 대출 신청 INSERT (회원)
-    int insertSmartLibReq(Connection conn, SmartLibReqDto dto);
+    // 신청 가능한 스마트도서관 목록 조회 (book_count < book_capacity 인 곳만)
+    List<SmartLibraryDto> findAvailable(Connection conn);
 
-    // 스마트도서관 대출 신청 목록 조회 SELECT (회원 - 대시보드)
-    List<SmartLibReqDto> findByUserId(Connection conn, int user_id);
+    // 스마트도서관 book_count 1 증가 (신청 완료 시 Service에서 호출)
+    void increaseBookCount(Connection conn, int smart_lib_id);
 }
-}
+
