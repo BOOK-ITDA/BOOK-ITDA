@@ -1,5 +1,5 @@
 package repository;
-import dto.LoanRecordDto;
+
 import dto.ReservationRecordDto;
 import java.sql.Connection;
 import java.util.List;

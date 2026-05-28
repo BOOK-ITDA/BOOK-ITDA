@@ -86,5 +86,5 @@ public class ReservationRecordDto {
     public void setBook_name(String book_name) { this.book_name = book_name; }
     public String getLibrary_name() { return library_name; }
     public void setLibrary_name(String library_name) { this.library_name = library_name; }
-}
+
 }
