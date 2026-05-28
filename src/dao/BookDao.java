@@ -15,12 +15,11 @@ public class BookDao implements BookRepository {
     // 공통: ResultSet → BookSearchResultDto 변환
     // 3개 함수 모두 SELECT 컬럼이 동일하므로 중복 제거용 private 메서드
     // ─────────────────────────────────────────────
-    private List<BookSearchResultDto> executeSearch(String sql, String keyword) {
+    private List<BookSearchResultDto> executeSearch(Connection conn, String sql, String keyword) {
         List<BookSearchResultDto> results = new ArrayList<>();
         String likeKeyword = "%" + keyword + "%";  // LIKE 패턴 조립
 
-        try (Connection conn = DatabaseConnector.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, likeKeyword);  // WHERE 조건 1개만 바인딩
 
@@ -52,15 +51,14 @@ public class BookDao implements BookRepository {
     // ─────────────────────────────────────────────
     @Override
     public List<BookSearchResultDto> findByTitle(String keyword) {
-        String sql =
-                "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
-                        "       l.name AS library_name, c.status " +
-                        "FROM BOOK b " +
-                        "JOIN COLLECTION c ON b.book_id = c.book_id " +
-                        "JOIN LIBRARY l    ON c.library_id = l.library_id " +
-                        "WHERE b.name LIKE ?";
+        String sql = "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
+                     "       l.name AS library_name, c.status " +
+                     "FROM BOOK b " +
+                     "JOIN COLLECTION c ON b.book_id = c.book_id " +
+                     "JOIN LIBRARY l    ON c.library_id = l.library_id " +
+                     "WHERE b.name LIKE ?";
 
-        return executeSearch(sql, keyword);
+        return executeSearch(conn, sql, keyword);
     }
 
     // ─────────────────────────────────────────────
@@ -68,16 +66,15 @@ public class BookDao implements BookRepository {
     // WHERE b.author LIKE '%keyword%'
     // ─────────────────────────────────────────────
     @Override
-    public List<BookSearchResultDto> findByAuthor(String keyword) {
-        String sql =
-                "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
-                        "       l.name AS library_name, c.status " +
-                        "FROM BOOK b " +
-                        "JOIN COLLECTION c ON b.book_id = c.book_id " +
-                        "JOIN LIBRARY l    ON c.library_id = l.library_id " +
-                        "WHERE b.author LIKE ?";
+    public List<BookSearchResultDto> findByAuthor(Connection conn, String keyword) {
+        String sql = "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
+                     "       l.name AS library_name, c.status " +
+                     "FROM BOOK b " +
+                     "JOIN COLLECTION c ON b.book_id = c.book_id " +
+                     "JOIN LIBRARY l    ON c.library_id = l.library_id " +
+                     "WHERE b.author LIKE ?";
 
-        return executeSearch(sql, keyword);
+        return executeSearch(conn, sql, keyword);
     }
 
     // ─────────────────────────────────────────────
@@ -85,15 +82,14 @@ public class BookDao implements BookRepository {
     // WHERE b.genre LIKE '%keyword%'
     // ─────────────────────────────────────────────
     @Override
-    public List<BookSearchResultDto> findByGenre(String keyword) {
-        String sql =
-                "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
-                        "       l.name AS library_name, c.status " +
-                        "FROM BOOK b " +
-                        "JOIN COLLECTION c ON b.book_id = c.book_id " +
-                        "JOIN LIBRARY l    ON c.library_id = l.library_id " +
-                        "WHERE b.genre LIKE ?";
+    public List<BookSearchResultDto> findByGenre(Connection conn, String keyword) {
+        String sql = "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
+                     "       l.name AS library_name, c.status " +
+                     "FROM BOOK b " +
+                     "JOIN COLLECTION c ON b.book_id = c.book_id " +
+                     "JOIN LIBRARY l    ON c.library_id = l.library_id " +
+                     "WHERE b.genre LIKE ?";
 
-        return executeSearch(sql, keyword);
+        return executeSearch(conn, sql, keyword);
     }
 }
