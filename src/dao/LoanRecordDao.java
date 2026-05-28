@@ -84,7 +84,7 @@ public class LoanRecordDao implements LoanRecordRepository {
     // 1. 전체 대출 기록 조회 (반납 완료 포함)
     // ──────────────────────────────────────────────
     @Override
-    public List<LoanRecordDto> findAllByUserId(int user_id) {
+    public List<LoanRecordDto> findAllByUserId(Connection conn, int user_id) {
         String sql =
                 "SELECT loan_id, user_id, book_id, library_id, " +
                 "       loan_date, due_date, return_date, extension_count " +
@@ -93,8 +93,7 @@ public class LoanRecordDao implements LoanRecordRepository {
                 "ORDER BY loan_date DESC";
 
         List<LoanRecordDto> list = new ArrayList<>();
-        try (Connection conn = DatabaseConnector.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, user_id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -111,7 +110,7 @@ public class LoanRecordDao implements LoanRecordRepository {
     // 2. 현재 대출 중인 기록만 조회 (return_date = NULL)
     // ──────────────────────────────────────────────
     @Override
-    public List<LoanRecordDto> findActiveByUserId(int user_id) {
+    public List<LoanRecordDto> findActiveByUserId(Connection conn, int user_id) {
         String sql =
                 "SELECT loan_id, user_id, book_id, library_id, " +
                 "       loan_date, due_date, return_date, extension_count " +
@@ -121,8 +120,7 @@ public class LoanRecordDao implements LoanRecordRepository {
                 "ORDER BY due_date ASC";
 
         List<LoanRecordDto> list = new ArrayList<>();
-        try (Connection conn = DatabaseConnector.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, user_id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
