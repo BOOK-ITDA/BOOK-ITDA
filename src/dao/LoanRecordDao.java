@@ -1,15 +1,37 @@
 package dao;
-import database.DatabaseConnector;
+
 import dto.LoanRecordDto;
 import repository.LoanRecordRepository;
+import database.DatabaseConnector;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LoanRecordDao implements LoanRecordRepository {
+
+    // ──────────────────────────────────────────────
+    // 공통 메서드: ResultSet → LoanRecordDto 변환
+    // ──────────────────────────────────────────────
+    private LoanRecordDto mapRow(ResultSet rs) throws SQLException {
+        return new LoanRecordDto(
+                rs.getInt("loan_id"),
+                rs.getInt("library_id"),
+                rs.getString("book_name"),
+                rs.getString("library_name"),
+                rs.getDate("loan_date") != null
+                        ? rs.getDate("loan_date").toLocalDate() : null,
+                rs.getDate("due_date") != null
+                        ? rs.getDate("due_date").toLocalDate() : null,
+                rs.getDate("return_date") != null
+                        ? rs.getDate("return_date").toLocalDate() : null,
+                rs.getInt("extension_count")
+        );
+    }
+
     @Override
     public void findRecord(int userId) throws SQLException {
         String sql = "SELECT lr.loan_id, lr.loan_date, lr.due_date, lr.return_date, lr.extension, " +
@@ -90,6 +112,36 @@ public class LoanRecordDao implements LoanRecordRepository {
             System.out.println("DAO 에러 발생 : " + e.getMessage());
             throw new RuntimeException("예정 반납 일자 업데이트 중 DB 오류 발생",e);
         }
+    }
+
+    // ──────────────────────────────────────────────
+    // 1. 전체 대출 기록 조회 (반납 완료 포함)
+    // ──────────────────────────────────────────────
+    @Override
+    public List<LoanRecordDto> findAllByUserId(Connection conn, int user_id) {
+        String sql =
+                "SELECT lr.loan_id, lr.library_id, " +
+                        "       lr.loan_date, lr.due_date, lr.return_date, lr.extension_count, " +
+                        "       b.name AS book_name, " +
+                        "       l.name AS library_name " +
+                        "FROM LOAN_RECORD lr " +
+                        "JOIN BOOK b ON lr.book_id = b.book_id " +
+                        "JOIN LIBRARY l ON lr.library_id = l.library_id " +
+                        "WHERE lr.user_id = ? " +
+                        "ORDER BY lr.loan_date DESC";
+
+        List<LoanRecordDto> list = new ArrayList<>();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, user_id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     public boolean returnBook(int loanId, int userId) {
@@ -194,5 +246,37 @@ public class LoanRecordDao implements LoanRecordRepository {
                 try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
             }
         }
+    }
+}
+
+    // ──────────────────────────────────────────────
+    // 2. 현재 대출 중인 기록만 조회 (return_date = NULL)
+    // ──────────────────────────────────────────────
+    @Override
+    public List<LoanRecordDto> findActiveByUserId(Connection conn, int user_id) {
+        String sql =
+                "SELECT lr.loan_id, lr.library_id, " +
+                        "       lr.loan_date, lr.due_date, lr.return_date, lr.extension_count, " +
+                        "       b.name AS book_name, " +
+                        "       l.name AS library_name " +
+                        "FROM LOAN_RECORD lr " +
+                        "JOIN BOOK b ON lr.book_id = b.book_id " +
+                        "JOIN LIBRARY l ON lr.library_id = l.library_id " +
+                        "WHERE lr.user_id = ? " +
+                        "  AND lr.return_date IS NULL " +
+                        "ORDER BY lr.due_date ASC";
+
+        List<LoanRecordDto> list = new ArrayList<>();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, user_id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

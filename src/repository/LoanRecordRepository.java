@@ -2,11 +2,15 @@ package repository;
 
 import java.sql.SQLException;
 import dto.LoanRecordDto;
+import java.util.List;
 import java.sql.Connection;
 
 public interface LoanRecordRepository {
-    //대출 기록 조회(회원)
-    void findRecord(int userId) throws SQLException;
+    // 전체 대출 기록 조회 (반납 완료 포함)
+    List<LoanRecordDto> findAllByUserId(Connection conn, int user_id);
+    // 현재 대출 중인 기록만 조회 (return_date가 NULL인 것만)
+    List<LoanRecordDto> findActiveByUserId(Connection conn, int user_id);
+
     // 대출 기록 데이터 삽입 - 일반 대출
     int insertLoanRecord(Connection conn, LoanRecordDto loanRecordDto);
     // 도서 연장 횟수 변경 - 연장하기
