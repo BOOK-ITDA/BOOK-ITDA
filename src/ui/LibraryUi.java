@@ -1,0 +1,48 @@
+package ui;
+
+import java.util.Scanner;
+
+public class LibraryUi {
+    private final Scanner scanner = new Scanner(System.in);
+    // case문 내용은 삭제하고 해당 기능 넣으시면 됩니당
+    public void showLibraryScreen(){
+        printLibraryMenu();
+        System.out.print("메뉴 선택 : ");
+        int choice = scanner.nextInt();
+        switch (choice){
+            case 0:
+                System.out.println("프로그램을 종료합니다. 이용해주셔서 감사합니다.");
+                break;
+            case 1:
+                System.out.println("도서 조회 기능을 선택하셨습니다.");
+                break;
+            case 2:
+                System.out.println("도서 반납 기능을 선택하셨습니다.");
+                break;
+            case 3:
+                System.out.println("도서 연장 기능을 선택하셨습니다.");
+                break;
+            case 4:
+                System.out.println("대시보드 기능을 선택하셨습니다.");
+                break;
+            default :
+                System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
+                showLibraryScreen();
+                break;
+
+
+        }
+
+    }
+    // 선택지 출력 함수
+    public void printLibraryMenu(){
+        System.out.println("아래의 기능들 중 원하시는 메뉴의 번호를 입력해주세요.");
+        System.out.println("====================================================");
+        System.out.println("[0] 프로그램 종료");
+        System.out.println("[1] 도서 조회 (검색, 대출, 예약, 신청)");
+        System.out.println("[2] 도서 반납");
+        System.out.println("[3] 도서 연장");
+        System.out.println("[4] 대시보드");
+        System.out.println("====================================================");
+    }
+}
