@@ -10,9 +10,10 @@ public class SearchUi {
 
         System.out.print("대출/예약/신청하고 싶은 도서를 입력하세요.(종료: 0) : ");
         int select = scanner.nextInt();
+        scanner.nextLine();
         // 도서 정보를 가져오는 코드가 있어야 하는데 아직 없어서 임의 변수로 세팅해놓겠습니다.
         if (select == 0)
-            System.exit(0);
+            System.exit(0); // 일단은 프로그램 완전 종료
         else if (select >= 1 && select <= 10) { // 10 대신 검색 결과 개수 들어갈 예정!
             String status = "AVAILABLE"; // 선택한 도서의 도서 상태가 들어갈 예정!
             switch (status) {
@@ -24,6 +25,7 @@ public class SearchUi {
         } else {
             System.out.println("없는 도서입니다. 검색 화면으로 돌아갑니다.");
             showSearchScreen();
+            return;
         }
     }
     // 선택지 출력 함수
@@ -46,6 +48,7 @@ public class SearchUi {
         printAvailableMenu();
         System.out.print("기능 선택 : ");
         int choice = scanner.nextInt();
+        scanner.nextLine();
         switch (choice) {
             case 1:
                 System.out.println("대출하기 기능을 선택하셨습니다.");
@@ -66,6 +69,7 @@ public class SearchUi {
         printBorrowedMenu();
         System.out.print("기능 선택 : ");
         int choice = scanner.nextInt();
+        scanner.nextLine();
         switch (choice) {
             case 1:
                 System.out.println("예약하기 기능을 선택하셨습니다.");
@@ -79,7 +83,5 @@ public class SearchUi {
     private void handleReservedBook(){
         System.out.println("선택한 도서는 현재 '예약 중' 상태입니다.");
         System.out.println("대출/신청/예약이 불가합니다. 다음에 다시 확인해주세요.");
-        LibraryUi library = new LibraryUi();
-        library.showLibraryScreen(); // 기능 선택 화면으로 돌아가기
     }
 }

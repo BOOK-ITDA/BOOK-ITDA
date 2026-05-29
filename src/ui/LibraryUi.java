@@ -9,6 +9,7 @@ public class LibraryUi {
         printLibraryMenu();
         System.out.print("메뉴 선택 : ");
         int choice = scanner.nextInt();
+        scanner.nextLine();
         switch (choice){
             case 0:
                 System.out.println("프로그램을 종료합니다. 이용해주셔서 감사합니다.");
@@ -28,7 +29,7 @@ public class LibraryUi {
             default :
                 System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
                 showLibraryScreen();
-                break;
+                return;
 
 
         }
