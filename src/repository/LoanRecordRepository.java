@@ -19,4 +19,6 @@ public interface LoanRecordRepository {
     void updateDueDate(Connection conn, int loan_id);
     // 도서 반납하기(회원 -> 트랜잭션)
     public boolean returnBook(int loanId, int userId);
+
+    void findRecord(int userId) throws SQLException;
 }

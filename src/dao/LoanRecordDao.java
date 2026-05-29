@@ -247,7 +247,6 @@ public class LoanRecordDao implements LoanRecordRepository {
             }
         }
     }
-}
 
     // ──────────────────────────────────────────────
     // 2. 현재 대출 중인 기록만 조회 (return_date = NULL)
