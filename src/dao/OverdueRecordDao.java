@@ -102,10 +102,12 @@ public class OverdueRecordDao implements OverdueRecordRepository {
     public void updateDailyFineAmount(Connection conn) throws SQLException {
         String sql = "UPDATE overdue_record SET fine_amount = fine_amount + 100 " +
                 "WHERE is_paid = 0";
-        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             int affectedRow = pstmt.executeUpdate();
             System.out.println("누적 연체료 갱신 완료 : " + affectedRow);
         }
+    }
+
     public List<OverdueRecordDto> getOverdue() throws SQLException {
         //사서 연체 기록 조회 기능
 
@@ -128,7 +130,7 @@ public class OverdueRecordDao implements OverdueRecordRepository {
                         rs.getInt("loan_id"),
                         rs.getInt("fine_amount"),
                         rs.getBoolean("is_paid"),
-                        rs.getInt("user_id;"),
+                        rs.getInt("user_id"),
                         rs.getString("user_name"),
                         rs.getString("book_name"),
                         rs.getDate("due_date").toLocalDate()
