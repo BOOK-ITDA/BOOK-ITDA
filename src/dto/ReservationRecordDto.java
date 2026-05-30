@@ -31,7 +31,6 @@ public class ReservationRecordDto {
     }
 
     // JOIN 조회용 필드 추가 (DB 컬럼 아님, SELECT 결과 담는 용도)
-    private String book_name;
     private String library_name;
 
     // JOIN 조회용 생성자 추가 (findByUserId에서 사용)
@@ -92,15 +91,7 @@ public class ReservationRecordDto {
         this.status = status;
     }
 
-    // 모든 속성을 포함한 생성자
-    ReservationRecordDto(int reserve_id, int user_id, int book_id, int library_id, LocalDate reserve_date, String status) {
-        this.reserve_id = reserve_id;
-        this.user_id = user_id;
-        this.book_id = book_id;
-        this.library_id = library_id;
-        this.reserve_date = reserve_date;
-        this.status = status;
-    }
+
 
     // 추가된 getter/setter
     public String getBook_name() { return book_name; }

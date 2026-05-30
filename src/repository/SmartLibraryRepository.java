@@ -16,6 +16,5 @@ public interface SmartLibraryRepository {
     // 스마트도서관 book_count 1 증가 (신청 완료 시 Service에서 호출)
     void increaseBookCount(Connection conn, int smart_lib_id);
 
-    List<SmartLibraryDto> getSmartLibList() throws SQLException;
 }
 

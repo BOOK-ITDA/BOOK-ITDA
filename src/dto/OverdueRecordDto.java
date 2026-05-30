@@ -11,13 +11,11 @@ public class OverdueRecordDto {
     private boolean is_paid;
     private int user_id;
     private String user_name;
-    private String book_name;
     private LocalDate due_date;
 
     // JOIN 조회용 추가 필드 (LOAN_RECORD + BOOK 테이블에서 가져옴)
     private String book_name;   // BOOK.name
-    private String loan_date;   // LOAN_RECORD.loan_date
-    private String due_date;    // LOAN_RECORD.due_date
+    private LocalDate loan_date;   // LOAN_RECORD.loan_date
 
     // 모든 속성을 포함하는 생성자
     public OverdueRecordDto(int overdue_id, int loan_id, int fine_amount, boolean is_paid, int user_id, String user_name, String book_name, LocalDate due_date) {
@@ -39,7 +37,7 @@ public class OverdueRecordDto {
 
     // JOIN 조회용 생성자
     public OverdueRecordDto(int overdue_id, int loan_id, int fine_amount, boolean is_paid,
-                            String book_name, String loan_date, String due_date) {
+                            String book_name, LocalDate loan_date, LocalDate due_date) {
         this.overdue_id = overdue_id;
         this.loan_id = loan_id;
         this.fine_amount = fine_amount;
@@ -87,9 +85,9 @@ public class OverdueRecordDto {
 
     public void setBook_name(String book_name) { this.book_name = book_name; }
 
-    public String getLoan_date() { return loan_date; }
+    public LocalDate getLoan_date() { return loan_date; }
 
-    public void setLoan_date(String loan_date) { this.loan_date = loan_date; }
+    public void setLoan_date(LocalDate loan_date) { this.loan_date = loan_date; }
 
     public String getUser_name() {return user_name;}
 
