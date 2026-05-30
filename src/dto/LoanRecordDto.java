@@ -49,6 +49,22 @@ public class LoanRecordDto {
         this.extension_count = extension_count;
     }
 
+    //사서 전용 조회 생성자
+    public LoanRecordDto(int loan_id, int user_id, int book_id, int library_id,
+                         LocalDate loan_date, LocalDate due_date, LocalDate return_date,
+                         int extension_count, String book_name, String library_name) {
+        this.loan_id = loan_id;
+        this.user_id = user_id;
+        this.book_id = book_id;
+        this.library_id = library_id;
+        this.loan_date = loan_date;
+        this.due_date = due_date;
+        this.return_date = return_date;
+        this.extension_count = extension_count;
+        this.book_name = book_name;
+        this.library_name = library_name;
+    }
+
     public int getLoan_id() {
         return loan_id;
     }
