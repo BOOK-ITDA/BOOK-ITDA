@@ -1,6 +1,5 @@
 package service;
 
-import dao.LibraryDao;
 import dto.LibraryDto;
 import repository.LibraryRepository;
 
@@ -8,9 +7,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class LibraryService {
-    private LibraryRepository libraryDao = new LibraryDao();
+    private final LibraryRepository libraryRepository;
+
+    public LibraryService(LibraryRepository libraryRepository) {
+        this.libraryRepository = libraryRepository;
+    }
 
     public List<LibraryDto> getLibList() throws SQLException {
-        return libraryDao.getLibList();
+        return libraryRepository.getLibList();
     }
 }

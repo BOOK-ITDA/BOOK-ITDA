@@ -13,9 +13,17 @@ import java.sql.SQLException;
 
 
 public class BranchTransferService {
-    private BranchTransferRepository branchTransferDao = new BranchTransferDao(); //분관대출신청
-    private OverdueRecordRepository overdueRecordDao = new OverdueRecordDao();
-    private CollectionRepository collectionDao = new CollectionDao();
+    private final BranchTransferRepository branchTransferRepository;
+    private final OverdueRecordRepository overdueRecordRepository;
+    private final CollectionRepository collectionRepository;
+
+    public BranchTransferService(BranchTransferRepository branchTransferRepository,
+                                 OverdueRecordRepository overdueRecordRepository,
+                                 CollectionRepository collectionRepository) {
+        this.branchTransferRepository = branchTransferRepository;
+        this.overdueRecordRepository = overdueRecordRepository;
+        this.collectionRepository = collectionRepository;
+    }
     //도서 상태 확인(소장 테이블 dao) -> 연체 여부 확인(연체 기록 테이블 dao) -> 도서관 목록 확인 및 선택(도서관 테이블 dao)
     // -> 분관대출 신청기록 생성 insert(여기서) -> 소장 테이블 상태 변경(reserved, 소장 테이블 dao)
 

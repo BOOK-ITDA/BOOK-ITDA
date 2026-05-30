@@ -1,14 +1,20 @@
 package service;
 
-import dao.LoanRecordDao;
+import dto.LoanRecordDto;
 import repository.LoanRecordRepository;
 
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class LoanRecordService {
-    private final LoanRecordRepository LoanRecord = new LoanRecordDao();
+    private final LoanRecordRepository loanRecordRepository;
+
+    public LoanRecordService(LoanRecordRepository loanRecordRepository) {
+        this.loanRecordRepository = loanRecordRepository;
+    }
 
     public void getMyLoanRecord(int userId) throws SQLException {
-        LoanRecord.findRecord(userId);
+        loanRecordRepository.findRecord(userId);
     }
 }
