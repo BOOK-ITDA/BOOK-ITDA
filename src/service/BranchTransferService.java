@@ -1,5 +1,6 @@
 package service;
 
+import dao.OverdueRecordDao;
 import database.DatabaseConnector;
 import dto.BranchTransferDto;
 import repository.BranchTransferRepository;
@@ -12,32 +13,43 @@ import java.util.List;
 
 
 public class BranchTransferService {
-    private final BranchTransferRepository branchTransferDao;
-    private final OverdueRecordRepository overdueRecordDao;
-    private final CollectionRepository collectionDao;
+    private final BranchTransferRepository branchTransferRepository;
+    private final OverdueRecordRepository overdueRecordRepository;
+    private final CollectionRepository collectionRepository;
 
-    public BranchTransferService(BranchTransferRepository branchTransferDao,
-                                 OverdueRecordRepository overdueRecordDao,
-                                 CollectionRepository collectionDao) {
-        this.branchTransferDao = branchTransferDao;
-        this.overdueRecordDao = overdueRecordDao;
-        this.collectionDao = collectionDao;
+    public BranchTransferService(BranchTransferRepository branchTransferRepository,
+                                 OverdueRecordRepository overdueRecordRepository,
+                                 CollectionRepository collectionRepository) {
+        this.branchTransferRepository = branchTransferRepository;
+        this.overdueRecordRepository = overdueRecordRepository;
+        this.collectionRepository = collectionRepository;
     }
     //분관대출신청
     //전체 로직: (도서 선택 -> 분관신청 선택) -> 수령 원하는 도서관 목록 바로 출력 -> 도서관 ID 입력 -> 연체 여부 확인 -> 분관신청 삽입 -> 소장 테이블 예약중으로 변경
     public void requestBranchTransfer(int userId, int bookId, int holdingLibId, int pickupLibId) throws SQLException {
         try (Connection conn = DatabaseConnector.getConnection()) {
             conn.setAutoCommit(false);
-            try {//연체 확인
-                boolean hasOverdue = overdueRecordDao.hasUnpaidOverdue(conn, userId);
+
+
+            try {
+                // 1. 연체 여부 확인
+
+                boolean hasOverdue = overdueRecordRepository.hasUnpaidOverdue(conn, userId);
+
                 if (hasOverdue) {
                     System.out.println("미납 연체가 있어 신청이 불가합니다.");
                     conn.rollback();
                     return;
                 }
-                //연체가 없으면 소장도서관 번호 입력 -> 분관대출신청기록 삽입 -> 소장 테이블 상태 변경
-                branchTransferDao.requestBranchTransfer(conn, userId, bookId, holdingLibId, pickupLibId);
-                collectionDao.updateStatus(conn, bookId, holdingLibId, "RESERVED");
+
+
+                // 2. (앞에서 이미 대출 가능 상태인거 확인하고 넘겨줌) -> 연체 없음 -> 분관대출 가능 -> 분관대출 신청 INSERT
+                branchTransferRepository.requestBranchTransfer(conn, userId, bookId, holdingLibId, pickupLibId);
+
+                // 3. 소장 테이블 상태 RESERVED로 변경
+                collectionRepository.updateStatus(conn, bookId, holdingLibId, "RESERVED");
+
+
                 conn.commit();
                 System.out.println("분관대출 신청이 완료되었습니다.");
             } catch (Exception e) {
@@ -49,6 +61,6 @@ public class BranchTransferService {
 
     //분관대출신청목록 조회(회원용)
     public List<BranchTransferDto> findByUserId(int userId) throws SQLException {
-        return branchTransferDao.findByUserId(userId);
+        return branchTransferRepository.findByUserId(userId);
     }
 }
