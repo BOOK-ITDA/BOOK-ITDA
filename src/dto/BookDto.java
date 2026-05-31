@@ -6,7 +6,7 @@ public class BookDto {
     private String author;
     private String publisher;
     private String genre;
-
+    private int library_id;
     private String library_name;
     private String status;
 
@@ -21,12 +21,13 @@ public class BookDto {
 
     // 검색 결과용 생성자 (JOIN 포함)
     public BookDto(int book_id, String name, String author, String publisher, String genre,
-                   String library_name, String status) {
+                   int library_id, String library_name, String status) {
         this.book_id = book_id;
         this.name = name;
         this.author = author;
         this.publisher = publisher;
         this.genre = genre;
+        this.library_id = library_id;
         this.library_name = library_name;
         this.status = status;
     }
@@ -74,4 +75,6 @@ public class BookDto {
     public void setLibrary_name(String library_name) { this.library_name = library_name; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public int getLibrary_id() { return library_id;}
+    public void setLibrary_id(int library_id) { this.library_id = library_id;}
 }

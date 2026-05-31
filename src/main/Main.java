@@ -3,6 +3,10 @@ package main;
 //일단 지금은 jdbc 연결하고 연결상태 확인하는 코드 넣어놨습니당.
 
 import database.DatabaseConnector;
+
+import ui.StaffUi;
+
+
 import java.sql.Connection;
 
 public class Main {
@@ -10,6 +14,11 @@ public class Main {
         try {
             Connection conn = DatabaseConnector.getConnection();
             System.out.println("DB 연결");
+            StaffUi staffUi = new StaffUi();
+
+            // 사서 관리 메뉴 화면 실행
+            staffUi.showStaffScreen();
+
             conn.close();
         } catch (Exception e) {
             System.out.println("DB 연결 실패: " + e.getMessage());

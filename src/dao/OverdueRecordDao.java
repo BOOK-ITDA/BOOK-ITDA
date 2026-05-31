@@ -71,8 +71,8 @@ public class OverdueRecordDao implements OverdueRecordRepository {
                             rs.getInt("fine_amount"),
                             rs.getBoolean("is_paid"),
                             rs.getString("book_name"),
-                            rs.getString("loan_date"),
-                            rs.getString("due_date")
+                            rs.getDate("loan_date").toLocalDate(),
+                            rs.getDate("due_date").toLocalDate()
                     ));
                 }
             }
@@ -148,15 +148,29 @@ public class OverdueRecordDao implements OverdueRecordRepository {
 
     @Override
     public void updateStatus(int overdueId) throws SQLException {
-        String sql =
-                "UPDATE OVERDUE_RECORD SET is_paid = true WHERE overdue_id = ?";
+        String checkSql = "SELECT is_paid FROM OVERDUE_RECORD WHERE overdue_id = ?";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement checkPstmt = conn.prepareStatement(checkSql)) {
+            checkPstmt.setInt(1, overdueId);
+            try (ResultSet rs = checkPstmt.executeQuery()) {
+                if (rs.next()) {
+                    if (rs.getBoolean("is_paid")) {
+                        System.out.println("이미 납부 처리된 기록입니다.");
+                        return;
+                    }
+                } else {
+                    System.out.println("존재하지 않는 연체기록ID입니다.");
+                    return;
+                }
+            }
+        }
 
+        String sql = "UPDATE OVERDUE_RECORD SET is_paid = true WHERE overdue_id = ?";
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, overdueId);
-            int rows = pstmt.executeUpdate();
+            pstmt.executeUpdate();
             System.out.println("상태 변경 완료");
         }
-
     }
 }
