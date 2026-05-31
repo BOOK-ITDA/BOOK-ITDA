@@ -34,7 +34,7 @@ public class BranchTransferService {
 
             try {
                 // 1. 연체 여부 확인
-                boolean hasOverdue = overdueRecordDao.hasUnpaidOverdue(conn, userId);
+                boolean hasOverdue = overdueRecordRepository.hasUnpaidOverdue(conn, userId);
                 if (hasOverdue) {
                     System.out.println("미납 연체가 있어 신청이 불가합니다.");
                     conn.rollback();
@@ -42,10 +42,10 @@ public class BranchTransferService {
                 }
 
                 // 2. (앞에서 이미 대출 가능 상태인거 확인하고 넘겨줌) -> 연체 없음 -> 분관대출 가능 -> 분관대출 신청 INSERT
-                branchTransferDao.requestBranchTransfer(conn, userId, bookId, holdingLibId, pickupLibId);
+                branchTransferRepository.requestBranchTransfer(conn, userId, bookId, holdingLibId, pickupLibId);
 
                 // 3. 소장 테이블 상태 RESERVED로 변경
-                collectionDao.updateStatus(conn, bookId, holdingLibId, "RESERVED");
+                collectionRepository.updateStatus(conn, bookId, holdingLibId, "RESERVED");
 
                 conn.commit();
                 System.out.println("분관대출 신청이 완료되었습니다.");
