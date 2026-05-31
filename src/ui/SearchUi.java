@@ -54,7 +54,12 @@ public class SearchUi {
                 System.out.println("대출하기 기능을 선택하셨습니다.");
                 break;
             case 2:
+                int userId = 1;
+                int bookId = 1;
+                int holdingLibId = 1;
                 System.out.println("분관 대출 신청하기 기능을 선택하셨습니다.");
+                BTRUi branchTransferUI = new BTRUi();
+                branchTransferUI.showBranchTransferScreen(userId, bookId, holdingLibId);
                 break;
             case 3:
                 System.out.println("스마트 도서관 대출 신청하기 기능을 선택하셨습니다.");

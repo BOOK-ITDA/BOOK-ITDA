@@ -122,17 +122,30 @@ public class SmartLibReqDao implements SmartLibReqRepository {
 
     @Override
     public void updateStatus(int smartReqId) throws SQLException {
-        //스마트도서관 신청 상태 변경(사서)
-        //메인에서 테스트 완료
+        //사서 스마트도서관 상태 변경
+        //테스트완료
+        String checkSql = "SELECT status FROM SMART_LIB_REQUEST WHERE smt_req_id = ?";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement checkPstmt = conn.prepareStatement(checkSql)) {
+            checkPstmt.setInt(1, smartReqId);
+            try (ResultSet rs = checkPstmt.executeQuery()) {
+                if (rs.next()) {
+                    if (rs.getString("status").equals("AVAILABLE")) {
+                        System.out.println("이미 처리된 신청입니다.");
+                        return;
+                    }
+                } else {
+                    System.out.println("존재하지 않는 신청ID입니다.");
+                    return;
+                }
+            }
+        }
 
-        String sql =
-                "UPDATE SMART_LIB_REQUEST SET status = 'AVAILABLE' " +
-                        "WHERE smt_req_id = ?";
-
+        String sql = "UPDATE SMART_LIB_REQUEST SET status = 'AVAILABLE' WHERE smt_req_id = ?";
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, smartReqId);
-            int rows = pstmt.executeUpdate();
+            pstmt.executeUpdate();
             System.out.println("상태 변경 완료");
         }
     }

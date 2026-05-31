@@ -12,33 +12,29 @@ import java.util.List;
 //3. 분관대출 목록 조회(회원-대시보드) -> 콘솔창에 버튼 입력하면 해당 함수가 실행될 수 있도록(SELECT)
 
 public class BranchTransferDao implements BranchTransferRepository {
+    //도서 상태 확인(소장 테이블 dao) -> 연체 여부 확인(연체 기록 테이블 dao) -> 도서관 목록 확인 및 선택(도서관 테이블 dao)
+    // -> 분관대출 신청기록 생성 insert(여기서) -> 소장 테이블 상태 변경(reserved, 소장 테이블 dao)
+    //이 부분 insert 테스트 완료
     @Override
-    public int requestBranchTransfer(BranchTransferDto bt) throws SQLException { //분관 대출 신청 -> 나중에 전체적인 기능은 서비스에서 구현, 지금은 Insert 정도만!!
-        //도서 상태 확인(소장 테이블 dao) -> 연체 여부 확인(연체 기록 테이블 dao) -> 도서관 목록 확인 및 선택(도서관 테이블 dao)
-        // -> 분관대출 신청기록 생성 insert(여기서) -> 소장 테이블 상태 변경(reserved, 소장 테이블 dao)
-        //이 부분 insert 테스트 완료
+    public int requestBranchTransfer(Connection conn, int userId, int bookId, int holdingLibId, int pickupLibId) throws SQLException {
         String insertSql =
                 "INSERT INTO BRANCH_TRANSFER_REQUEST " +
                         "(user_id, book_id, holding_lib_id, pickup_lib_id, status) " +
                         "VALUES (?, ?, ?, ?, 'PROCESSING')";
 
-        try (Connection conn = DatabaseConnector.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
-
-            pstmt.setInt(1, bt.getUser_id());
-            pstmt.setInt(2, bt.getBook_id());
-            pstmt.setInt(3, bt.getHolding_lib_id());
-            pstmt.setInt(4, bt.getPickup_lib_id());
+        try (PreparedStatement pstmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, bookId);
+            pstmt.setInt(3, holdingLibId);
+            pstmt.setInt(4, pickupLibId);
             pstmt.executeUpdate();
 
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    bt.setTransf_req_id(generatedKeys.getInt(1));
+                    return generatedKeys.getInt(1);  // 생성된 ID 반환
                 }
             }
-
-            System.out.println("분관대출 신청 완료");
-            return 1;
+            return -1;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -88,18 +84,31 @@ public class BranchTransferDao implements BranchTransferRepository {
     }
 
     @Override
+    //사서 분관대출 상태 변경
+    //테스트완료
     public void updateStatus(int transferReqId) throws SQLException {
-        //분관대출상태변경(사서)
-        //테스트 완료
+        String checkSql = "SELECT status FROM BRANCH_TRANSFER_REQUEST WHERE transf_req_id = ?";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement checkPstmt = conn.prepareStatement(checkSql)) {
+            checkPstmt.setInt(1, transferReqId);
+            try (ResultSet rs = checkPstmt.executeQuery()) {
+                if (rs.next()) {
+                    if (rs.getString("status").equals("AVAILABLE")) {
+                        System.out.println("이미 처리된 신청입니다.");
+                        return;
+                    }
+                } else {
+                    System.out.println("존재하지 않는 신청ID입니다.");
+                    return;
+                }
+            }
+        }
 
-        String sql =
-                "UPDATE BRANCH_TRANSFER_REQUEST SET status = 'AVAILABLE' " +
-                        "WHERE transf_req_id = ?";
-
+        String sql = "UPDATE BRANCH_TRANSFER_REQUEST SET status = 'AVAILABLE' WHERE transf_req_id = ?";
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, transferReqId);
-            int rows = pstmt.executeUpdate();
+            pstmt.executeUpdate();
             System.out.println("상태 변경 완료");
         }
     }

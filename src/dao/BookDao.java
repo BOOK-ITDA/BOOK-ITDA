@@ -27,6 +27,7 @@ public class BookDao implements BookRepository {
                             rs.getString("author"),
                             rs.getString("publisher"),
                             rs.getString("genre"),
+                            rs.getInt("library_id"),
                             rs.getString("library_name"),
                             rs.getString("status")
                     ));
@@ -47,7 +48,7 @@ public class BookDao implements BookRepository {
     public List<BookDto> findByTitle(Connection conn, String keyword) {
         String sql =
                 "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
-                        "       l.name AS library_name, c.status " +
+                        "l.library_id AS library_id, l.name AS library_name, c.status " +
                         "FROM BOOK b " +
                         "JOIN COLLECTION c ON b.book_id = c.book_id " +
                         "JOIN LIBRARY l    ON c.library_id = l.library_id " +
@@ -63,7 +64,7 @@ public class BookDao implements BookRepository {
     public List<BookDto> findByAuthor(Connection conn, String keyword) {
         String sql =
                 "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
-                        "       l.name AS library_name, c.status " +
+                        "l.library_id AS library_id, l.name AS library_name, c.status " +
                         "FROM BOOK b " +
                         "JOIN COLLECTION c ON b.book_id = c.book_id " +
                         "JOIN LIBRARY l    ON c.library_id = l.library_id " +
@@ -79,7 +80,7 @@ public class BookDao implements BookRepository {
     public List<BookDto> findByGenre(Connection conn, String keyword) {
         String sql =
                 "SELECT b.book_id, b.name, b.author, b.publisher, b.genre, " +
-                        "       l.name AS library_name, c.status " +
+                        "l.library_id AS library_id, l.name AS library_name, c.status " +
                         "FROM BOOK b " +
                         "JOIN COLLECTION c ON b.book_id = c.book_id " +
                         "JOIN LIBRARY l    ON c.library_id = l.library_id " +

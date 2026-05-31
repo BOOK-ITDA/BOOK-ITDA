@@ -11,9 +11,6 @@ public class SmartLibReqDto {
     private String book_name;
     private String library_name;
 
-    // JOIN 조회용 필드 (DB 컬럼 아님)
-    private String book_name;
-    private String smart_lib_name;
 
     // INSERT용 생성자 (id 제외)
     // smt_req_id → AUTO_INCREMENT, status → DB 기본값 'PROCESSING'
