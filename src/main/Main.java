@@ -4,7 +4,6 @@ package main;
 
 import database.DatabaseConnector;
 
-import ui.StaffUi;
 
 
 import java.sql.Connection;
@@ -14,10 +13,7 @@ public class Main {
         try {
             Connection conn = DatabaseConnector.getConnection();
             System.out.println("DB 연결");
-            StaffUi staffUi = new StaffUi();
 
-            // 사서 관리 메뉴 화면 실행
-            staffUi.showStaffScreen();
 
             conn.close();
         } catch (Exception e) {

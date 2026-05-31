@@ -53,7 +53,7 @@ public class StaffUi {
     // 기능별 핸들러
     // ─────────────────────────────────────────
     private void handleAllUsers() {
-        System.out.println("\n===== 전체 회원 목록 =====");
+        System.out.println("\n========================= 전체 회원 목록 =========================");
         try {
             List<UserDto> users = staffService.getAllUsers();
             if (users.isEmpty()) {
@@ -61,9 +61,9 @@ public class StaffUi {
             } else {
                 System.out.printf("%-8s %-10s %-12s %-15s %-8s%n",
                         "회원ID", "이름", "생년월일", "전화번호", "대출수");
-                System.out.println("-".repeat(58));
+                System.out.println("-".repeat(65));
                 for (UserDto u : users) {
-                    System.out.printf("%-8d %-10s %-12s %-15s %-8d%n",
+                    System.out.printf("%-8d %-10s %-12s %-20s %-8d%n",
                             u.getUser_id(),
                             u.getName(),
                             u.getBirthdate(),
@@ -79,7 +79,7 @@ public class StaffUi {
     }
 
     private void handleBranchTransfer() {
-        System.out.println("\n===== 분관 대출 신청 목록 =====");
+        System.out.println("\n======================================== 분관 대출 신청 목록 ========================================");
         try {
             List<BranchTransferDto> list = staffService.getBranchTransfer();
             if (list.isEmpty()) {
@@ -87,11 +87,11 @@ public class StaffUi {
                 showStaffScreen();
                 return;
             }
-            System.out.printf("%-8s %-8s %-15s %-12s %-12s %-12s%n",
+            System.out.printf("%-8s %-8s %-18s %-25s %-20s %-20s%n",
                     "신청ID", "회원ID", "도서명", "소장도서관", "수령도서관", "처리상태");
-            System.out.println("-".repeat(72));
+            System.out.println("-".repeat(100));
             for (BranchTransferDto b : list) {
-                System.out.printf("%-8d %-8d %-15s %-12s %-12s %-12s%n",
+                System.out.printf("%-8d %-8d %-15s %-20s %-20s %-20s%n",
                         b.getTransf_req_id(),
                         b.getUser_id(),
                         b.getBook_name(),
@@ -100,10 +100,10 @@ public class StaffUi {
                         b.getStatus());
             }
 
-            System.out.println("====================================================");
+            System.out.println("=================================================================================================");
             System.out.println("[1] 처리 상태 변경 (PROCESSING → AVAILABLE)");
             System.out.println("[0] 뒤로가기");
-            System.out.println("====================================================");
+            System.out.println("=================================================================================================");
             System.out.print("기능 선택 : ");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -138,7 +138,7 @@ public class StaffUi {
     }
 
     private void handleSmartLibReq() {
-        System.out.println("\n===== 스마트 도서관 신청 목록 =====");
+        System.out.println("\n====================================== 스마트 도서관 신청 목록 ==========================================");
         try {
             List<SmartLibReqDto> list = staffService.getSmartReq();
             if (list.isEmpty()) {
@@ -146,11 +146,11 @@ public class StaffUi {
                 showStaffScreen();
                 return;
             }
-            System.out.printf("%-8s %-8s %-15s %-12s %-15s %-12s%n",
+            System.out.printf("%-8s %-8s %-18s %-25s %-20s %-12s%n",
                     "신청ID", "회원ID", "도서명", "소장도서관", "스마트도서관", "처리상태");
-            System.out.println("-".repeat(75));
+            System.out.println("-".repeat(100));
             for (SmartLibReqDto s : list) {
-                System.out.printf("%-8d %-8d %-15s %-12s %-15s %-12s%n",
+                System.out.printf("%-8d %-8d %-15s %-20s %-20s %-12s%n",
                         s.getSmt_req_id(),
                         s.getUser_id(),
                         s.getBook_name(),
@@ -159,10 +159,10 @@ public class StaffUi {
                         s.getStatus());
             }
 
-            System.out.println("====================================================");
+            System.out.println("=====================================================================================================");
             System.out.println("[1] 처리 상태 변경 (PROCESSING → AVAILABLE)");
             System.out.println("[0] 뒤로가기");
-            System.out.println("====================================================");
+            System.out.println("=====================================================================================================");
             System.out.print("기능 선택 : ");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -197,7 +197,7 @@ public class StaffUi {
     }
 
     private void handleReservation() {
-        System.out.println("\n===== 예약 기록 목록 =====");
+        System.out.println("\n=================================== 예약 기록 목록 ===================================");
         try {
             List<ReservationRecordDto> list = staffService.getReservation();
             if (list.isEmpty()) {
@@ -205,11 +205,11 @@ public class StaffUi {
                 showStaffScreen();
                 return;
             }
-            System.out.printf("%-8s %-8s %-15s %-10s %-12s %-12s%n",
+            System.out.printf("%-8s %-8s %-10s %-13s %-15s %-12s%n",
                     "예약ID", "회원ID", "도서명", "도서관ID", "예약날짜", "처리상태");
-            System.out.println("-".repeat(70));
+            System.out.println("-".repeat(80));
             for (ReservationRecordDto r : list) {
-                System.out.printf("%-8d %-8d %-15s %-10d %-12s %-12s%n",
+                System.out.printf("%-8d %-8d %-15s %-10d %-18s %-12s%n",
                         r.getReserve_id(),
                         r.getUser_id(),
                         r.getBook_name(),
@@ -218,10 +218,10 @@ public class StaffUi {
                         r.getStatus());
             }
 
-            System.out.println("====================================================");
+            System.out.println("==============================================================================");
             System.out.println("[1] 예약 상태 변경 (PROCESSING → AVAILABLE)");
             System.out.println("[0] 뒤로가기");
-            System.out.println("====================================================");
+            System.out.println("==============================================================================");
             System.out.print("기능 선택 : ");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -256,7 +256,7 @@ public class StaffUi {
     }
 
     private void handleOverdue() {
-        System.out.println("\n===== 연체 기록 목록 =====");
+        System.out.println("\n=================================== 연체 기록 목록 ===================================");
         try {
             List<OverdueRecordDto> list = staffService.getOverdue();
             if (list.isEmpty()) {
@@ -266,9 +266,9 @@ public class StaffUi {
             }
             System.out.printf("%-10s %-10s %-15s %-12s %-10s %-10s%n",
                     "연체기록ID", "회원명", "도서명", "예정반납일", "연체료(원)", "납부여부");
-            System.out.println("-".repeat(70));
+            System.out.println("-".repeat(85));
             for (OverdueRecordDto o : list) {
-                System.out.printf("%-10d %-10s %-15s %-12s %-10d %-10s%n",
+                System.out.printf("%-10d %-10s %-15s %-18s %-10d %-10s%n",
                         o.getOverdue_id(),
                         o.getUser_name(),
                         o.getBook_name(),
@@ -277,10 +277,10 @@ public class StaffUi {
                         o.isIs_paid() ? "납부완료" : "미납");
             }
 
-            System.out.println("====================================================");
+            System.out.println("==================================================================================");
             System.out.println("[1] 연체료 납부 처리");
             System.out.println("[0] 뒤로가기");
-            System.out.println("====================================================");
+            System.out.println("==================================================================================");
             System.out.print("기능 선택 : ");
             int choice = scanner.nextInt();
             scanner.nextLine();
