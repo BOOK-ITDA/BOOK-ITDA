@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class SearchUi {
     private final Scanner scanner = new Scanner(System.in);
+    private final BookService bookService = new BookService();
     // case문 내용은 삭제하고 해당 기능 넣으시면 됩니당
     public void showSearchScreen(){
         // 검색 서비스 (기능) 붙이기
