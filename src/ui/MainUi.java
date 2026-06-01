@@ -23,7 +23,7 @@ public class MainUi {
                 System.out.println("회원 로그인 기능을 선택하셨습니다.");
                 int userId = new UserLoginUi().login(); //로그인
                 if (userId != -1) { //로그인 성공하면
-                    //회원 대시보드로 이동
+                    new LibraryUi().showLibraryScreen();
                 } else {
                     showMainScreen(); //로그인 실패하면 지금 메뉴 다시 보여줘서 기능 선택하도록 함
                 }
