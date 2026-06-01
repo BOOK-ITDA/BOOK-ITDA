@@ -3,6 +3,7 @@ package ui;
 import dao.*;
 import dto.*;
 import service.StaffService;
+import session.Session;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -29,7 +30,7 @@ public class StaffUi {
         System.out.println("[3] 스마트 도서관 신청 관리");
         System.out.println("[4] 예약 기록 관리");
         System.out.println("[5] 연체 기록 관리");
-        System.out.println("[0] 종료");
+        System.out.println("[0] 로그아웃");
         System.out.println("=============================");
         System.out.print("기능 선택 : ");
 
@@ -42,7 +43,9 @@ public class StaffUi {
             case 3: handleSmartLibReq();    break;
             case 4: handleReservation();    break;
             case 5: handleOverdue();        break;
-            case 0: System.exit(0);         break;
+            case 0: Session.logout();
+                System.out.println("로그아웃 되었습니다.");
+                return;
             default:
                 System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
                 showStaffScreen();
