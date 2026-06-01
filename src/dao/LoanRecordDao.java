@@ -305,4 +305,22 @@ public class LoanRecordDao implements LoanRecordRepository {
             throw new RuntimeException("회원 ID 읽어오는 중 DB 오류 발생",e);
         }
     }
+
+    @Override
+    public int getExtensionCount(Connection conn, int loan_id) {
+        String sql = "SELECT extension_count FROM loan_record WHERE loan_id = ?";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setInt(1, loan_id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("extension_count");
+                } else {
+                    throw new IllegalArgumentException("해당 대출 기록 정보를 찾을 수 없습니다."); // 대출 기록 정보를 찾을 수 없을 경우 처리
+                }
+            }
+        } catch(SQLException e){
+            System.out.println("DAO 에러 발생 : " + e.getMessage());
+            throw new RuntimeException("대출 기록 연장 횟수 읽어오는 중 DB 오류 발생",e);
+        }
+    }
 }

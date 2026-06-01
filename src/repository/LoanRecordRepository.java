@@ -24,4 +24,6 @@ public interface LoanRecordRepository {
 
     // 대출 기록 번호와 일치하는 대출 기록의 회원 ID 가져오기 - 연장하기
     int findUserIdByLoanId(Connection conn, int loan_id);
+    // 도서 연장 횟수 조회 - 연장하기
+    int getExtensionCount(Connection conn, int loan_id);
 }
