@@ -1,9 +1,14 @@
 package ui;
 
+import dao.CollectionDao;
+import dao.LoanRecordDao;
+import dao.OverdueRecordDao;
+import dao.UserDao;
 import dto.BookDto;
 import service.BookService;
+
 import session.Session;
-import ui.BTRUi;
+import service.LoanService;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -120,7 +125,11 @@ public class SearchUi {
 
         switch (choice) {
             case 1:
+                // 대출 기능은 코드가 짧아서 우선 따로 UI 파일을 만들지는 않았습니다.
                 System.out.println("대출하기 기능을 선택하셨습니다.");
+                LoanService loanService = new LoanService(new CollectionDao(), new OverdueRecordDao(), new UserDao(), new LoanRecordDao());
+                int loan_num = loanService.loanProcess(6, selected.getBook_id(), selected.getLibrary_id()); // user ID 임시 번호
+                System.out.println("대출이 완료되었습니다. (대출 기록 번호 : " + loan_num +" )");
                 break;
             case 2:
                 System.out.println("분관 대출 신청하기 기능을 선택하셨습니다.");
