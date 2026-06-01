@@ -21,7 +21,7 @@ public class Main {
         try {
             new MainUi().showMainScreen();
         } catch (Exception e) {
-            System.out.println("DB 연결 실패: " + e.getMessage());
+            System.out.println("오류 발생: " + e.getMessage());
         }
     }
 }
