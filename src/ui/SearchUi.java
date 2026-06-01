@@ -123,8 +123,7 @@ public class SearchUi {
                 System.out.println("분관 대출 신청하기 기능을 선택하셨습니다.");
                 BTRUi branchTransferUI = new BTRUi();
                 branchTransferUI.showBranchTransferScreen(
-                        1,
-/*                        Session.getUserId(),*/  //로그인 정리되면 적용
+                        Session.getUserId(),
                         selected.getBook_id(),
                         selected.getLibrary_id()
                 );
@@ -133,8 +132,7 @@ public class SearchUi {
                 System.out.println("스마트 도서관 대출 신청하기 기능을 선택하셨습니다.");
                 SmartLibraryUi smartLibraryUi = new SmartLibraryUi();
                 smartLibraryUi.showSmartLibraryScreen(
-                        1,
-/*                        Session.getUserId(),*/   //로그인 정리되면 적용
+                        Session.getUserId(),
                         selected.getBook_id(),
                         selected.getLibrary_id()
                 );
