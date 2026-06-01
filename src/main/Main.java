@@ -6,6 +6,7 @@ import database.DatabaseConnector;
 
 import dto.BookDto;
 import service.BookService;
+import ui.DashBoardUi;
 import ui.SearchUi;
 import ui.StaffUi;
 
@@ -23,10 +24,15 @@ public class Main {
             SearchUi searchUi = new SearchUi();
             searchUi.showSearchScreen();*/
 
-            StaffUi staffUi = new StaffUi();
+            // userId 1번 (김민준)으로 대시보드 테스트
+            int testUserId = 1;
+            DashBoardUi dashBoardUi = new DashBoardUi(testUserId);
+            dashBoardUi.showDashBoardScreen();
+
+/*            StaffUi staffUi = new StaffUi();
 
             // 사서 관리 메뉴 화면 실행
-            staffUi.showStaffScreen();
+            staffUi.showStaffScreen();*/
 
             conn.close();
         } catch (Exception e) {
