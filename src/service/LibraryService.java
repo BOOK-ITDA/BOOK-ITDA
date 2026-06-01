@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class LibraryService {
-    private final LibraryRepository libraryRepository;
+    private final LibraryRepository libraryDao;
 
-    public LibraryService(LibraryRepository libraryRepository) {
-        this.libraryRepository = libraryRepository;
+    public LibraryService(LibraryRepository libraryDao) {
+        this.libraryDao = libraryDao;
     }
 
     public List<LibraryDto> getLibList() throws SQLException {
-        return libraryRepository.getLibList();
+        return libraryDao.getLibList();
     }
 }

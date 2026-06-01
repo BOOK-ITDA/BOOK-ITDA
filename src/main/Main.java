@@ -4,10 +4,13 @@ package main;
 
 import database.DatabaseConnector;
 
+
 import dto.BookDto;
 import service.BookService;
+import ui.MainUi;
 import ui.SearchUi;
 import ui.StaffUi;
+
 
 
 import java.sql.Connection;
@@ -21,12 +24,14 @@ public class Main {
 
 /*            // SearchUi 테스트
             SearchUi searchUi = new SearchUi();
-            searchUi.showSearchScreen();*/
+            searchUi.showSearchScreen();
 
             StaffUi staffUi = new StaffUi();
 
             // 사서 관리 메뉴 화면 실행
-            staffUi.showStaffScreen();
+            staffUi.showStaffScreen();*/
+            new MainUi().showMainScreen();
+
 
             conn.close();
         } catch (Exception e) {
