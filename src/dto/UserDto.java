@@ -31,6 +31,11 @@ public class UserDto {
         this.loan_count = loan_count;
     }
 
+    // 로그인용 생성자 추가
+    public UserDto(int user_id) {
+        this.user_id = user_id;
+    }
+
     public int getUser_id() {
         return user_id;
     }

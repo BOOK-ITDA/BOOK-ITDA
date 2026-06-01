@@ -108,4 +108,20 @@ public class UserDao implements UserRepository {
             throw new RuntimeException("회원 기록 생성 중 DB 오류 발생",e);
         }
     }
+
+    @Override
+    public int login(int inputId, String inputPw) throws SQLException {
+        String sql = "SELECT user_id FROM USER WHERE user_id=? AND password=?";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, inputId);
+            pstmt.setString(2, inputPw);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) return rs.getInt("user_id");
+            }
+        }
+        return -1;
+    }
+
+
 }
