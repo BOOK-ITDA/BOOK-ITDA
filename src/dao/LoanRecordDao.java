@@ -286,4 +286,23 @@ public class LoanRecordDao implements LoanRecordRepository {
         }
         return list;
     }
+
+    // 대출 기록 ID를 가진 회원 ID 가져오기
+    @Override
+    public int findUserIdByLoanId(Connection conn, int loan_id) {
+        String sql = "SELECT user_id FROM loan_record WHERE loan_id = ?";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setInt(1, loan_id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("user_id");
+                } else {
+                    throw new IllegalArgumentException("해당 대출 기록 정보를 찾을 수 없습니다."); // 대출 기록 정보를 찾을 수 없을 경우 처리
+                }
+            }
+        } catch(SQLException e){
+            System.out.println("DAO 에러 발생 : " + e.getMessage());
+            throw new RuntimeException("회원 ID 읽어오는 중 DB 오류 발생",e);
+        }
+    }
 }

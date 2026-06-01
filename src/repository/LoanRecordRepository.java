@@ -21,4 +21,7 @@ public interface LoanRecordRepository {
     public boolean returnBook(int loanId, int userId);
 
     public List<LoanRecordDto> findRecord(int userId) throws SQLException;
+
+    // 대출 기록 번호와 일치하는 대출 기록의 회원 ID 가져오기 - 연장하기
+    int findUserIdByLoanId(Connection conn, int loan_id);
 }
