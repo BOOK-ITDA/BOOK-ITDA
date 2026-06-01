@@ -1,8 +1,10 @@
 package service;
 
+import dto.LoanRecordDto;
 import repository.LoanRecordRepository;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class LoanRecordService {
     private final LoanRecordRepository loanRecordDao;
@@ -11,7 +13,7 @@ public class LoanRecordService {
         this.loanRecordDao = loanRecordDao;
     }
 
-    public void getMyLoanRecord(int userId) throws SQLException {
-        loanRecordDao.findRecord(userId);
+    public List<LoanRecordDto> getMyLoanRecord(int userId) throws SQLException {
+        return loanRecordDao.findRecord(userId);  // return 추가
     }
 }
