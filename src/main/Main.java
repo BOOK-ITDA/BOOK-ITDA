@@ -2,15 +2,15 @@ package main;
 
 //일단 지금은 jdbc 연결하고 연결상태 확인하는 코드 넣어놨습니당.
 
-import dao.CollectionDao;
-import dao.OverdueRecordDao;
-import dao.SmartLibReqDao;
-import dao.SmartLibraryDao;
+import dao.*;
 import database.DatabaseConnector;
 
 import dto.BookDto;
 import dto.SmartLibraryDto;
 import service.BookService;
+import service.StaffService;
+import session.Session;
+import ui.MainUi;
 import service.SmartLibReqService;
 import ui.DashBoardUi;
 import ui.SearchUi;
@@ -40,6 +40,8 @@ public class Main {
 
             // 사서 관리 메뉴 화면 실행
             staffUi.showStaffScreen();*/
+/*            new MainUi().showMainScreen();*/
+
 
             conn.close();
         } catch (Exception e) {

@@ -15,4 +15,6 @@ public interface UserRepository {
     void decreaseLoanCount(Connection conn, int user_id);
     // 회원 데이터 저장하기 - 회원 가입
     int insertUser(Connection conn, UserDto userDto);
+    //회원 로그인
+    int login(int inputId, String inputPw) throws SQLException;
 }

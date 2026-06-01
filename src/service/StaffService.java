@@ -1,71 +1,77 @@
 package service;
 
-import dao.*;
 import dto.*;
 import repository.*;
+import session.Session;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class StaffService {
-    //사서와 관련된 기능
-    //1/. 전체 회원 조회(비밀번호 제외)
-    //2/. 분관대출 신청 상태 변경 -> BranchTransfer -> 조회 및 상태 업데이트 별개로 분리 및 ui에서 합칠 예정
-    //3. 스마트도서관 신청 상태 변경 -> SmartLib -> 조회 및 상태 업데이트 별개로 분리 및 ui에서 합칠 예정
-    //4. 예약 기록 상태 변경
-    //4. 연체 기록 상태 변경 -> OverdueRecord ->  조회 및 상태 업데이트 별개로 분리 및 ui에서 합칠 예정
+    private final UserRepository userDao;
+    private final BranchTransferRepository branchTransferDao;
+    private final SmartLibReqRepository smartLibReqDao;
+    private final ReservationRecordRepository reservationDao;
+    private final OverdueRecordRepository overdueRecordDao;
+    private final StaffRepository staffDao;
 
-    private final UserRepository userRepository;
-    private final BranchTransferRepository branchTransferRepository;
-    private final SmartLibReqRepository smartLibReqRepository;
-    private final ReservationRecordRepository reservationRecordRepository;
-    private final OverdueRecordRepository overdueRecordRepository;
+    public StaffService(UserRepository userDao,
+                        BranchTransferRepository branchTransferDao,
+                        SmartLibReqRepository smartLibReqDao,
+                        ReservationRecordRepository reservationDao,
+                        OverdueRecordRepository overdueRecordDao, StaffRepository staffDao) {
+        this.userDao = userDao;
+        this.branchTransferDao = branchTransferDao;
+        this.smartLibReqDao = smartLibReqDao;
+        this.reservationDao = reservationDao;
+        this.overdueRecordDao = overdueRecordDao;
+        this.staffDao = staffDao;
+    }
 
-    public StaffService(UserRepository userRepository,
-                        BranchTransferRepository branchTransferRepository,
-                        SmartLibReqRepository smartLibReqRepository,
-                        ReservationRecordRepository reservationRecordRepository,
-                        OverdueRecordRepository overdueRecordRepository) {
-        this.userRepository = userRepository;
-        this.branchTransferRepository = branchTransferRepository;
-        this.smartLibReqRepository = smartLibReqRepository;
-        this.reservationRecordRepository = reservationRecordRepository;
-        this.overdueRecordRepository = overdueRecordRepository;
+    // 사서 로그인
+    // 비밀번호 일치 → Session에 사서 세션 저장 → true 반환
+    // 비밀번호 불일치 → false 반환
+    public boolean staffLogin(String inputPassword) {
+        boolean isCorrect = staffDao.checkPassword(inputPassword);
+        if (isCorrect) {
+            Session.loginAsStaff();
+        }
+        return isCorrect;
     }
 
     public List<UserDto> getAllUsers() throws SQLException {
-        return userRepository.findUserAll();
+        return userDao.findUserAll();
     }
 
     public List<BranchTransferDto> getBranchTransfer() throws SQLException {
-        return branchTransferRepository.getBranchTransfer();
+        return branchTransferDao.getBranchTransfer();
     }
 
     public void updateBranchTransferStatus(int transferReqId) throws SQLException {
-        branchTransferRepository.updateStatus(transferReqId);
+        branchTransferDao.updateStatus(transferReqId);
     }
 
     public List<SmartLibReqDto> getSmartReq() throws SQLException {
-        return smartLibReqRepository.getSmartReq();
+        return smartLibReqDao.getSmartReq();
     }
 
     public void updateSmartLibReqStatus(int smartReqId) throws SQLException {
-        smartLibReqRepository.updateStatus(smartReqId);
+        smartLibReqDao.updateStatus(smartReqId);
     }
 
     public List<ReservationRecordDto> getReservation() throws SQLException {
-        return reservationRecordRepository.getReservation();
+        return reservationDao.getReservation();
     }
 
     public void updateReservationStatus(int reservationId) throws SQLException {
-        reservationRecordRepository.updateStatus(reservationId);
+        reservationDao.updateStatus(reservationId);
     }
 
     public List<OverdueRecordDto> getOverdue() throws SQLException {
-        return overdueRecordRepository.getOverdue();
+        return overdueRecordDao.getOverdue();
     }
 
     public void updateOverdueStatus(int overdueId) throws SQLException {
-        overdueRecordRepository.updateStatus(overdueId);
+        overdueRecordDao.updateStatus(overdueId);
     }
 }

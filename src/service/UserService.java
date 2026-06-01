@@ -1,17 +1,17 @@
 package service;
 
-import dao.BranchTransferDao;
-import dao.UserDao;
-import dto.UserDto;
-import repository.BranchTransferRepository;
 import repository.UserRepository;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class UserService {
+    private final UserRepository userRepository;
 
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-
-
+    public int login(int inputId, String inputPw) throws SQLException {
+        return userRepository.login(inputId, inputPw);
+    }
 }
