@@ -1,12 +1,13 @@
 package ui;
 
-import dao.CollectionDao;
-import dao.LoanRecordDao;
-import dao.OverdueRecordDao;
-import dao.UserDao;
+import dao.*;
 import dto.BookDto;
+import repository.CollectionRepository;
+import repository.OverdueRecordRepository;
+import repository.ReservationRecordRepository;
 import service.BookService;
 import service.LoanService;
+import service.ReserveService;
 import ui.BTRUi;
 
 import java.sql.SQLException;
@@ -162,7 +163,12 @@ public class SearchUi {
         switch (choice) {
             case 1:
                 System.out.println("예약하기 기능을 선택하셨습니다.");
-                break;
+                ReserveService reserveService = new ReserveService(new CollectionDao(), new OverdueRecordDao(), new ReservationRecordDao());
+                // user id는 MainUi 및 기능들이 구현된 후에 수정하겠습니다.
+                int reserve_num = reserveService.reserveProcess(6, selected.getBook_id(),          // selected에서 꺼내기
+                        selected.getLibrary_id() );
+                System.out.println("예약이 완료되었습니다. (예약 기록 번호 : " + reserve_num +" )");
+                return;
             default:
                 System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
                 handleBorrowedBook(selected);
