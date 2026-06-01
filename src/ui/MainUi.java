@@ -29,6 +29,7 @@ public class MainUi {
                 }
                 break;
             case 3:
+                System.out.println("회원 로그인 기능을 선택하셨습니다.");
                 boolean staffLoginResult = new StaffLoginUi().showStaffLoginScreen();
                 if (!staffLoginResult) {
                     showMainScreen(); // 실패 시에만 메인 메뉴 복귀
