@@ -2,6 +2,7 @@ package ui;
 
 import dto.BookDto;
 import service.BookService;
+import session.Session;
 import ui.BTRUi;
 
 import java.sql.SQLException;
@@ -122,19 +123,20 @@ public class SearchUi {
                 System.out.println("분관 대출 신청하기 기능을 선택하셨습니다.");
                 BTRUi branchTransferUI = new BTRUi();
                 branchTransferUI.showBranchTransferScreen(
-                        1,                               // 임시 user_id
-                        //SessionManager.getUserId(),     // 로그인 구현 후 SessionManager로 교체
-                        selected.getBook_id(),          // selected에서 꺼내기
-                        selected.getLibrary_id()        // selected에서 꺼내기
+                        1,
+/*                        Session.getUserId(),*/  //로그인 정리되면 적용
+                        selected.getBook_id(),
+                        selected.getLibrary_id()
                 );
                 break;
             case 3:
                 System.out.println("스마트 도서관 대출 신청하기 기능을 선택하셨습니다.");
                 SmartLibraryUi smartLibraryUi = new SmartLibraryUi();
                 smartLibraryUi.showSmartLibraryScreen(
-                        1,                          // 임시 user_id (로그인 구현 후 SessionManager로 교체)
-                        selected.getBook_id(),      // selected에서 꺼내기
-                        selected.getLibrary_id()    // selected에서 꺼내기
+                        1,
+/*                        Session.getUserId(),*/   //로그인 정리되면 적용
+                        selected.getBook_id(),
+                        selected.getLibrary_id()
                 );
                 break;
             default:

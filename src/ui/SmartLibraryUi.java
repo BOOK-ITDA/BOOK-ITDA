@@ -24,7 +24,7 @@ public class SmartLibraryUi {
     private final Scanner scanner = new Scanner(System.in);
 
     // SearchUi의 case 3에서 호출
-    // userId      : 로그인한 회원 ID (현재는 임시값, 로그인 구현 후 SessionManager로 교체)
+    // userId      : 로그인한 회원 ID (현재는 임시값, 로그인 구현 후 Session으로 교체)
     // bookId      : 검색에서 선택한 도서 ID
     // libraryId   : 해당 도서의 소장 도서관 ID
     public void showSmartLibraryScreen(int userId, int bookId, int libraryId) {
