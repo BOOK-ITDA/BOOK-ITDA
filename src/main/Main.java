@@ -2,16 +2,23 @@ package main;
 
 //일단 지금은 jdbc 연결하고 연결상태 확인하는 코드 넣어놨습니당.
 
+import dao.CollectionDao;
+import dao.OverdueRecordDao;
+import dao.SmartLibReqDao;
+import dao.SmartLibraryDao;
 import database.DatabaseConnector;
 
 import dto.BookDto;
+import dto.SmartLibraryDto;
 import service.BookService;
+import service.SmartLibReqService;
 import ui.DashBoardUi;
 import ui.SearchUi;
 import ui.StaffUi;
 
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public class Main {
@@ -25,9 +32,9 @@ public class Main {
             searchUi.showSearchScreen();*/
 
             // userId 1번 (김민준)으로 대시보드 테스트
-            int testUserId = 1;
+/*            int testUserId = 1;
             DashBoardUi dashBoardUi = new DashBoardUi(testUserId);
-            dashBoardUi.showDashBoardScreen();
+            dashBoardUi.showDashBoardScreen();*/
 
 /*            StaffUi staffUi = new StaffUi();
 

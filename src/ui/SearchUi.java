@@ -130,6 +130,12 @@ public class SearchUi {
                 break;
             case 3:
                 System.out.println("스마트 도서관 대출 신청하기 기능을 선택하셨습니다.");
+                SmartLibraryUi smartLibraryUi = new SmartLibraryUi();
+                smartLibraryUi.showSmartLibraryScreen(
+                        1,                          // 임시 user_id (로그인 구현 후 SessionManager로 교체)
+                        selected.getBook_id(),      // selected에서 꺼내기
+                        selected.getLibrary_id()    // selected에서 꺼내기
+                );
                 break;
             default:
                 System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
