@@ -29,8 +29,10 @@ public class MainUi {
                 }
                 break;
             case 3:
-                new StaffLoginUi().showStaffLoginScreen();
-                showMainScreen(); // 로그인 실패 시 메인 메뉴로 복귀
+                boolean staffLoginResult = new StaffLoginUi().showStaffLoginScreen();
+                if (!staffLoginResult) {
+                    showMainScreen(); // 실패 시에만 메인 메뉴 복귀
+                }
                 break;
             default :
                 System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");

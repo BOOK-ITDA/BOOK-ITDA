@@ -16,7 +16,7 @@ public class StaffLoginUi {
     );
     private final Scanner scanner = new Scanner(System.in);
 
-    public void showStaffLoginScreen() {
+    public boolean showStaffLoginScreen() {
         System.out.println("\n====================================================");
         System.out.println("                  사서 로그인");
         System.out.println("====================================================");
@@ -28,8 +28,10 @@ public class StaffLoginUi {
         if (loginSuccess) {
             System.out.println("로그인 성공! 사서 관리 메뉴로 이동합니다.");
             new StaffUi().showStaffScreen();
+            return true;
         } else {
             System.out.println("비밀번호가 일치하지 않습니다.");
+            return false;
         }
     }
 }
