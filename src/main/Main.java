@@ -2,40 +2,24 @@ package main;
 
 //일단 지금은 jdbc 연결하고 연결상태 확인하는 코드 넣어놨습니당.
 
+import dao.OverdueRecordDao;
 import database.DatabaseConnector;
-
-
 import dto.BookDto;
+import repository.OverdueRecordRepository;
 import service.BookService;
+import service.OverdueService;
 import ui.MainUi;
 import ui.SearchUi;
 import ui.StaffUi;
-
-
-
 import java.sql.Connection;
 import java.util.List;
 
+
 public class Main {
     public static void main(String[] args) {
-        try {
-            Connection conn = DatabaseConnector.getConnection();
-            System.out.println("DB 연결");
+        OverdueRecordRepository overdueRepo = new OverdueRecordDao();
+        OverdueService overdueService = new OverdueService(overdueRepo);
 
-/*            // SearchUi 테스트
-            SearchUi searchUi = new SearchUi();
-            searchUi.showSearchScreen();
-
-            StaffUi staffUi = new StaffUi();
-
-            // 사서 관리 메뉴 화면 실행
-            staffUi.showStaffScreen();*/
-            new MainUi().showMainScreen();
-
-
-            conn.close();
-        } catch (Exception e) {
-            System.out.println("DB 연결 실패: " + e.getMessage());
-        }
+        overdueService.startDailyOverdueBatch(); // 자정마다 연체 기록 갱신
     }
 }
