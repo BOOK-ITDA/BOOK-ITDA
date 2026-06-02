@@ -10,6 +10,8 @@ import repository.UserRepository;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
+
 
 public class ExtendService {
     // 인터페이스에 의존
@@ -23,7 +25,7 @@ public class ExtendService {
         this.overdueRecordRepository = overdueRecordRepository;
         this.loanRecordRepository = loanRecordRepository;
     }
-
+    // 연체 처리 (조건 검사)
     public int extendProcess(int user_id, int book_id, int library_id, int loan_id){
         try (Connection conn = DatabaseConnector.getConnection()) {
             try {
@@ -74,4 +76,15 @@ public class ExtendService {
             throw new RuntimeException("데이터베이스 연결 실패", e);
         }
     }
+
+    // 대출 중인 도서 목로 조회
+    public List<LoanRecordDto> getActiveLoans(int user_id){
+        try (Connection conn = DatabaseConnector.getConnection()) {
+            return loanRecordRepository.findBorrowedListByUserId(conn, user_id);
+        } catch (SQLException e) {
+            throw new RuntimeException("현재 대출 중인 목록을 불러오는 중 오류 발생", e);
+        }
+    }
+
+
 }
