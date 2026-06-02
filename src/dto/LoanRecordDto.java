@@ -65,6 +65,10 @@ public class LoanRecordDto {
         this.library_name = library_name;
     }
 
+    // 아무 필드 초기화도 안 하는 생성자 - 연장하기 전 대출 중인 도서 목록 조회 당시 사용
+    public LoanRecordDto(){
+
+    };
     public int getLoan_id() {
         return loan_id;
     }
