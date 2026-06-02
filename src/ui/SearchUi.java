@@ -1,11 +1,16 @@
 package ui;
 
-import dao.*;
+import dao.CollectionDao;
+import dao.LoanRecordDao;
+import dao.OverdueRecordDao;
+import dao.UserDao;
 import dto.BookDto;
 import repository.CollectionRepository;
 import repository.OverdueRecordRepository;
 import repository.ReservationRecordRepository;
 import service.BookService;
+
+import session.Session;
 import service.LoanService;
 import service.ReserveService;
 import ui.BTRUi;
@@ -17,6 +22,9 @@ import java.util.Scanner;
 public class SearchUi {
     private final Scanner scanner = new Scanner(System.in);
     private final BookService bookService = new BookService();
+
+    int userId = Session.getUserId(); //회원 아이디 가져오는 부분입니당
+
     // case문 내용은 삭제하고 해당 기능 넣으시면 됩니당
     public void showSearchScreen(){
         // 검색 서비스 (기능)
@@ -131,12 +139,13 @@ public class SearchUi {
             case 2:
                 System.out.println("분관 대출 신청하기 기능을 선택하셨습니다.");
                 BTRUi branchTransferUI = new BTRUi();
-                branchTransferUI.showBranchTransferScreen(
-                        1,                               // 임시 user_id
-                        //SessionManager.getUserId(),     // 로그인 구현 후 SessionManager로 교체
+                boolean success = branchTransferUI.showBranchTransferScreen(
+                        userId,
                         selected.getBook_id(),          // selected에서 꺼내기
                         selected.getLibrary_id()        // selected에서 꺼내기
                 );
+                if (!success) handleAvailableBook(selected);
+                else new LibraryUi().showLibraryScreen();
                 break;
             case 3:
                 System.out.println("스마트 도서관 대출 신청하기 기능을 선택하셨습니다.");
