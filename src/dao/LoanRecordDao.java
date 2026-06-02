@@ -323,4 +323,38 @@ public class LoanRecordDao implements LoanRecordRepository {
             throw new RuntimeException("대출 기록 연장 횟수 읽어오는 중 DB 오류 발생",e);
         }
     }
+
+    @Override
+    public List<LoanRecordDto> findBorrowedListByUserId(Connection conn, int user_id) {
+        String sql = "SELECT lr.loan_id, lr.book_id, lr.library_id, " +
+                " lr.loan_date, lr.due_date, lr.extension_count, " +
+                " b.name AS book_name, l.name AS library_name " +
+                " FROM loan_record lr " +
+                " JOIN book b on lr.book_id = b.book_id " +
+                " JOIN library l on lr.library_id = l.library_id " +
+                " WHERE lr.user_id = ? AND lr.return_date IS NULL " +
+                " ORDER BY lr.due_date ASC";
+        List<LoanRecordDto> list = new ArrayList<>();
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setInt(1, user_id);
+            try (ResultSet rs = pstmt.executeQuery()){
+                while (rs.next()){
+                    LoanRecordDto dto = new LoanRecordDto();
+                    dto.setLoan_id(rs.getInt("loan_id"));
+                    dto.setBook_id(rs.getInt("book_id"));
+                    dto.setLibrary_id(rs.getInt("library_id"));
+                    dto.setBook_name(rs.getString("book_name"));
+                    dto.setLibrary_name(rs.getString("library_name"));
+                    dto.setLoan_date(rs.getDate("loan_date").toLocalDate());
+                    dto.setDue_date(rs.getDate("due_date").toLocalDate());
+                    dto.setExtension_count(rs.getInt("extension_count"));
+
+                    list.add(dto);
+                }
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return list;
+    }
 }
