@@ -26,4 +26,6 @@ public interface LoanRecordRepository {
     int findUserIdByLoanId(Connection conn, int loan_id);
     // 도서 연장 횟수 조회 - 연장하기
     int getExtensionCount(Connection conn, int loan_id);
+    // 대출 중인 도서 목록 조회 - 연장하기 기능 전 사용
+    public List<LoanRecordDto> findBorrowedListByUserId(Connection conn, int user_id);
 }
