@@ -23,12 +23,6 @@ public class SignupUi {
             String username = scanner.nextLine().trim();
             System.out.print("비밀번호 입력: ");
             String password = scanner.nextLine().trim();
-            // 비밀번호 숫자만으로 이루어져 있는지 검증
-            String passwordRegex = "^\\d+$";
-            if (!password.matches(passwordRegex)) {
-                System.out.println("비밀번호는 숫자만 입력 가능합니다. ");
-                continue;
-            }
             System.out.print("비밀번호 확인: ");
             String checkPassword = scanner.nextLine().trim();
             // 비밀번호 체크
