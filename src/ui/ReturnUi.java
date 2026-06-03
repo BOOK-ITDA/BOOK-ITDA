@@ -48,6 +48,7 @@ public class ReturnUi {
                     System.out.print("반납할 대출기록ID를 입력하세요 : ");
                     int loanId = scanner.nextInt();
                     scanner.nextLine();
+
                     boolean result = returnBookService.returnBook(loanId, userId); //반납하기 서비스
                     if (result) {
                         System.out.println("반납이 완료되었습니다.");

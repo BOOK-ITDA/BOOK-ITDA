@@ -1,10 +1,23 @@
 package ui;
 
+import dao.CollectionDao;
+import dao.LoanRecordDao;
+import dao.OverdueRecordDao;
+import repository.CollectionRepository;
+import repository.LoanRecordRepository;
+import repository.OverdueRecordRepository;
+import service.ExtendService;
+import service.LoanRecordService;
+import session.Session;
+
 import java.util.Scanner;
 
 public class LibraryUi {
     private final Scanner scanner = new Scanner(System.in);
     // case문 내용은 삭제하고 해당 기능 넣으시면 됩니당
+
+    int userId = Session.getUserId(); //회원 아이디 가져오는 부분이에용 -> 각자 유저 아이디 인풋으로 필요하시면 넣으면 됩니당.
+
     public void showLibraryScreen(){
         printLibraryMenu();
         System.out.print("메뉴 선택 : ");
@@ -19,12 +32,18 @@ public class LibraryUi {
                 break;
             case 2:
                 System.out.println("도서 반납 기능을 선택하셨습니다.");
+                new ReturnUi().showReturnBookScreen(userId);
+                showLibraryScreen();
                 break;
             case 3:
                 System.out.println("도서 연장 기능을 선택하셨습니다.");
+                ExtendUi extendUi = new ExtendUi(new ExtendService(new CollectionDao(), new OverdueRecordDao(), new LoanRecordDao()));
+                extendUi.showExtendScreen(6);
                 break;
             case 4:
                 System.out.println("대시보드 기능을 선택하셨습니다.");
+                new DashBoardUi(Session.getUserId()).showDashBoardScreen();
+                showLibraryScreen();
                 break;
             default :
                 System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
