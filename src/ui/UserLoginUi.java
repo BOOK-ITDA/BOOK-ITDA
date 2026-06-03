@@ -26,7 +26,7 @@ public class UserLoginUi {
 
             int userId = userService.login(id, pw);
             if (userId != -1) { //로그인 성공하면
-                Session.login(userId); //세션에 아이디 저장
+                Session.loginAsUser(userId); //세션에 아이디 저장
                 System.out.println("로그인 성공! 환영합니다.");
                 return userId;
             }
