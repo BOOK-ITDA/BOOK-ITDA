@@ -13,13 +13,10 @@ import ui.SearchUi;
 import ui.StaffUi;
 import java.sql.Connection;
 import java.util.List;
-
+import config.AppInitializer;
 
 public class Main {
     public static void main(String[] args) {
-        OverdueRecordRepository overdueRepo = new OverdueRecordDao();
-        OverdueService overdueService = new OverdueService(overdueRepo);
-
-        overdueService.startDailyOverdueBatch(); // 자정마다 연체 기록 갱신
+        AppInitializer.init();
     }
 }
