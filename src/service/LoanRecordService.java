@@ -1,5 +1,6 @@
 package service;
 
+import database.DatabaseConnector;
 import dto.LoanRecordDto;
 import repository.LoanRecordRepository;
 
