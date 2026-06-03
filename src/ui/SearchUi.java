@@ -9,10 +9,7 @@ import repository.CollectionRepository;
 import repository.OverdueRecordRepository;
 import repository.ReservationRecordRepository;
 import service.BookService;
-
 import session.Session;
-import service.LoanService;
-import service.ReserveService;
 import ui.BTRUi;
 
 import java.sql.SQLException;
@@ -149,6 +146,12 @@ public class SearchUi {
                 break;
             case 3:
                 System.out.println("스마트 도서관 대출 신청하기 기능을 선택하셨습니다.");
+                SmartLibraryUi smartLibraryUi = new SmartLibraryUi();
+                smartLibraryUi.showSmartLibraryScreen(
+                        Session.getUserId(),
+                        selected.getBook_id(),
+                        selected.getLibrary_id()
+                );
                 break;
             default:
                 System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");

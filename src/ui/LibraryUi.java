@@ -42,6 +42,8 @@ public class LibraryUi {
                 break;
             case 4:
                 System.out.println("대시보드 기능을 선택하셨습니다.");
+                new DashBoardUi(Session.getUserId()).showDashBoardScreen();
+                showLibraryScreen();
                 break;
             default :
                 System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");

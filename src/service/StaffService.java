@@ -2,6 +2,7 @@ package service;
 
 import dto.*;
 import repository.*;
+import session.Session;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -12,17 +13,30 @@ public class StaffService {
     private final SmartLibReqRepository smartLibReqDao;
     private final ReservationRecordRepository reservationDao;
     private final OverdueRecordRepository overdueRecordDao;
+    private final StaffRepository staffDao;
 
     public StaffService(UserRepository userDao,
                         BranchTransferRepository branchTransferDao,
                         SmartLibReqRepository smartLibReqDao,
                         ReservationRecordRepository reservationDao,
-                        OverdueRecordRepository overdueRecordDao) {
+                        OverdueRecordRepository overdueRecordDao, StaffRepository staffDao) {
         this.userDao = userDao;
         this.branchTransferDao = branchTransferDao;
         this.smartLibReqDao = smartLibReqDao;
         this.reservationDao = reservationDao;
         this.overdueRecordDao = overdueRecordDao;
+        this.staffDao = staffDao;
+    }
+
+    // 사서 로그인
+    // 비밀번호 일치 → Session에 사서 세션 저장 → true 반환
+    // 비밀번호 불일치 → false 반환
+    public boolean staffLogin(String inputPassword) {
+        boolean isCorrect = staffDao.checkPassword(inputPassword);
+        if (isCorrect) {
+            Session.loginAsStaff();
+        }
+        return isCorrect;
     }
 
     public List<UserDto> getAllUsers() throws SQLException {
