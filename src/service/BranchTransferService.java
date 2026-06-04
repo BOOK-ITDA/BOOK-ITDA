@@ -52,6 +52,7 @@ public class BranchTransferService {
 
                 conn.commit();
                 System.out.println("분관대출 신청이 완료되었습니다.");
+                System.out.println("대출 가능 여부는 대시보드에서 확인하실 수 있습니다.");
             } catch (Exception e) {
                 conn.rollback();
                 throw new SQLException("분관대출 신청 중 오류 발생", e);
