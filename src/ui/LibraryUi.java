@@ -1,5 +1,13 @@
 package ui;
 
+import dao.CollectionDao;
+import dao.LoanRecordDao;
+import dao.OverdueRecordDao;
+import repository.CollectionRepository;
+import repository.LoanRecordRepository;
+import repository.OverdueRecordRepository;
+import service.ExtendService;
+import service.LoanRecordService;
 import session.Session;
 
 import java.util.Scanner;
@@ -29,9 +37,13 @@ public class LibraryUi {
                 break;
             case 3:
                 System.out.println("도서 연장 기능을 선택하셨습니다.");
+                ExtendUi extendUi = new ExtendUi(new ExtendService(new CollectionDao(), new OverdueRecordDao(), new LoanRecordDao()));
+                extendUi.showExtendScreen(6);
                 break;
             case 4:
                 System.out.println("대시보드 기능을 선택하셨습니다.");
+                new DashBoardUi(Session.getUserId()).showDashBoardScreen();
+                showLibraryScreen();
                 break;
             default :
                 System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");

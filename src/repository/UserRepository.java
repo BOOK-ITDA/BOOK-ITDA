@@ -17,4 +17,6 @@ public interface UserRepository {
     int insertUser(Connection conn, UserDto userDto);
     //회원 로그인
     int login(int inputId, String inputPw) throws SQLException;
+    // 전화번호 중복 확인 트리거
+    void createTriggerIfNotExists(Connection conn);
 }
