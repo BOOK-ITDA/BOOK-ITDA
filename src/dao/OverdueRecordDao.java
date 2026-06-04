@@ -100,8 +100,10 @@ public class OverdueRecordDao implements OverdueRecordRepository {
 
     @Override // 연체료 업데이트 (일간 업데이트)
     public void updateDailyFineAmount(Connection conn) throws SQLException {
-        String sql = "UPDATE overdue_record SET fine_amount = fine_amount + 100 " +
-                "WHERE is_paid = 0";
+        String sql = "UPDATE overdue_record o " +
+                "JOIN loan_record lr ON o.loan_id = lr.loan_id " +
+                "SET o.fine_amount = fine_amount + 100 " +
+                "WHERE is_paid = 0 AND lr.return_date IS NULL";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             int affectedRow = pstmt.executeUpdate();
             System.out.println("누적 연체료 갱신 완료 : " + affectedRow);
