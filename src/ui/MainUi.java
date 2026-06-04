@@ -1,5 +1,6 @@
 package ui;
 import dao.UserDao;
+import service.UserService;
 
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -18,6 +19,11 @@ public class MainUi {
                 break;
             case 1:
                 System.out.println("회원가입 기능을 선택하셨습니다.");
+                UserService userService = new UserService(new UserDao());
+                SignupUi signupUi = new SignupUi(userService);
+                signupUi.showSignupScreen();
+                System.out.println("시작 화면으로 복귀했습니다.");
+                showMainScreen();
                 break;
             case 2:
                 System.out.println("회원 로그인 기능을 선택하셨습니다.");

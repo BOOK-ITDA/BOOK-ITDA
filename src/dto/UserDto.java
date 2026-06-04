@@ -31,6 +31,16 @@ public class UserDto {
         this.loan_count = loan_count;
     }
 
+    // 회원ID 제외 생성자 - 회원 기록 INSERT
+    public UserDto(String name, LocalDate birthdate, String phone_number, String address, int loan_count, String password) {
+        this.name = name;
+        this.birthdate = birthdate;
+        this.phone_number = phone_number;
+        this.address = address;
+        this.loan_count = loan_count;
+        this.password = password;
+    }
+
     // 로그인용 생성자 추가
     public UserDto(int user_id) {
         this.user_id = user_id;

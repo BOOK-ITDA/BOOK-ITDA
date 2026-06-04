@@ -104,6 +104,9 @@ public class UserDao implements UserRepository {
                 } else throw new SQLException("생성된 ID를 가져올 수 없습니다.");
             }
         } catch(SQLException e){
+            if ("45000".equals(e.getSQLState())) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
             System.out.println("DAO 에러 발생 : " + e.getMessage());
             throw new RuntimeException("회원 기록 생성 중 DB 오류 발생",e);
         }
@@ -121,6 +124,34 @@ public class UserDao implements UserRepository {
             }
         }
         return -1;
+    }
+
+    @Override // 전화번호 중복 확인 트리거 생성
+    public void createTriggerIfNotExists(Connection conn) {
+        String sql =
+                "CREATE TRIGGER IF NOT EXISTS before_user_insert " +
+                "BEFORE INSERT ON user " +
+                "FOR EACH ROW " +
+                "BEGIN " +
+                "    DECLARE phone_count INT; " +
+                "    " +
+                "    SELECT COUNT(*) INTO phone_count "+
+                "    FROM user " +
+                "    WHERE phone_number = NEW.phone_number; " +
+                "    " +
+                "    IF phone_count > 0 THEN " +
+                "        SIGNAL SQLSTATE '45000' " +
+                "        SET MESSAGE_TEXT = '이미 가입된 휴대폰 번호입니다.'; "+
+                "    END IF; " +
+                "END";
+
+        try (Statement stmt = conn.createStatement()){
+            stmt.execute(sql);
+            System.out.println("휴대폰 중복 방지 트리거 생성 완료");
+        } catch(SQLException e){
+            System.out.println("트리거 생성 중 오류 발생: "+e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
 
