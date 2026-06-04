@@ -2,27 +2,28 @@ package main;
 
 //일단 지금은 jdbc 연결하고 연결상태 확인하는 코드 넣어놨습니당.
 
-import dao.*;
 import database.DatabaseConnector;
-
+import repository.OverdueRecordRepository;
+import dao.*;
 import dto.BookDto;
 import dto.SmartLibraryDto;
 import service.BookService;
+import service.OverdueService;
+import service.SmartLibReqService;
 import service.StaffService;
 import session.Session;
 import ui.MainUi;
-import service.SmartLibReqService;
 import ui.DashBoardUi;
 import ui.SearchUi;
 import ui.StaffUi;
-
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import config.AppInitializer;
 
 public class Main {
     public static void main(String[] args) {
+        AppInitializer.init();
         try {
             Connection conn = DatabaseConnector.getConnection();
             System.out.println("DB 연결");
