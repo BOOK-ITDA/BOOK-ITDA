@@ -8,6 +8,7 @@ import repository.ReservationRecordRepository;
 import service.BookService;
 import service.LoanService;
 import service.ReserveService;
+import dao.ReservationRecordDao;
 import session.Session;
 import ui.BTRUi;
 
@@ -129,7 +130,7 @@ public class SearchUi {
                 // 대출 기능은 코드가 짧아서 우선 따로 UI 파일을 만들지는 않았습니다.
                 System.out.println("대출하기 기능을 선택하셨습니다.");
                 LoanService loanService = new LoanService(new CollectionDao(), new OverdueRecordDao(), new UserDao(), new LoanRecordDao());
-                int loan_num = loanService.loanProcess(6, selected.getBook_id(), selected.getLibrary_id()); // user ID 임시 번호
+                int loan_num = loanService.loanProcess(userId, selected.getBook_id(), selected.getLibrary_id());
                 System.out.println("대출이 완료되었습니다. (대출 기록 번호 : " + loan_num +" )");
                 break;
             case 2:
@@ -175,8 +176,7 @@ public class SearchUi {
             case 1:
                 System.out.println("예약하기 기능을 선택하셨습니다.");
                 ReserveService reserveService = new ReserveService(new CollectionDao(), new OverdueRecordDao(), new ReservationRecordDao());
-                // user id는 MainUi 및 기능들이 구현된 후에 수정하겠습니다.
-                int reserve_num = reserveService.reserveProcess(6, selected.getBook_id(),          // selected에서 꺼내기
+                int reserve_num = reserveService.reserveProcess(userId, selected.getBook_id(),          // selected에서 꺼내기
                         selected.getLibrary_id() );
                 System.out.println("예약이 완료되었습니다. (예약 기록 번호 : " + reserve_num +" )");
                 return;
