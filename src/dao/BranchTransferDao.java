@@ -41,6 +41,26 @@ public class BranchTransferDao implements BranchTransferRepository {
             throw new SQLException("분관대출 신청 중 오류 발생", e);
         }
     }
+    //분관대출 신청 -> 소장 도서관 = 수령 도서관일 때 신청 금지 트리거
+    public void createBranchTransferTrigger(Connection conn) {
+        String sql =
+                "CREATE TRIGGER IF NOT EXISTS before_branch_transfer_insert " +
+                        "BEFORE INSERT ON BRANCH_TRANSFER_REQUEST " +
+                        "FOR EACH ROW " +
+                        "BEGIN " +
+                        "    IF NEW.holding_lib_id = NEW.pickup_lib_id THEN " +
+                        "        SIGNAL SQLSTATE '45000' " +
+                        "        SET MESSAGE_TEXT = '소장 도서관과 픽업 도서관이 동일합니다.'; " +
+                        "    END IF; " +
+                        "END";
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("분관대출 도서관 중복 방지 트리거 생성 완료");
+        } catch (SQLException e) {
+            System.out.println("트리거 생성 중 오류: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public List<BranchTransferDto> getBranchTransfer() throws SQLException {

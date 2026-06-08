@@ -1,5 +1,6 @@
 package config;
 
+import dao.BranchTransferDao;
 import dao.OverdueRecordDao;
 import dao.UserDao;
 import database.DatabaseConnector;
@@ -14,6 +15,8 @@ public class AppInitializer {
         try (Connection conn = DatabaseConnector.getConnection()) {
             UserDao userDao = new UserDao();
             userDao.createTriggerIfNotExists(conn);
+            BranchTransferDao branchTransferDao = new BranchTransferDao();
+            branchTransferDao.createBranchTransferTrigger(conn);
         } catch (SQLException e) {
             throw new RuntimeException("초기화 실패", e);
         }

@@ -193,34 +193,8 @@ public class DashBoardUi {
 
     // ─────────────────────────────────────────
     // [5] 분관 대출 신청 목록 조회
-    // BranchTransferDao.findByUserId() 사용
-    // 이 DAO는 conn을 파라미터로 받지 않고
-    // 내부에서 직접 DatabaseConnector를 호출하는 구조
     // ─────────────────────────────────────────
     private void handleBranchTransfers() {
-        System.out.println("\n===== 분관 대출 신청 목록 =====");
-        try {
-            List<BranchTransferDto> list = branchTransferDao.findByUserId(userId);
-
-            if (list.isEmpty()) {
-                System.out.println("분관 대출 신청 내역이 없습니다.");
-            } else {
-                System.out.printf("%-8s %-20s %-12s %-12s %-12s%n",
-                        "신청ID", "도서명", "소장도서관", "수령도서관", "처리상태");
-                System.out.println("-".repeat(65));
-                for (BranchTransferDto b : list) {
-                    System.out.printf("%-8d %-20s %-12s %-12s %-12s%n",
-                            b.getTransf_req_id(),
-                            b.getBook_name(),
-                            b.getHolding_lib_name(),
-                            b.getPickup_lib_name(),
-                            b.getStatus());
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("[오류] 분관 대출 신청 목록 조회 중 오류가 발생했습니다.");
-            e.printStackTrace();
-        }
-        showDashBoardScreen();
+        new ViewBTRUi().showBranchTransferRecord(userId);
     }
 }

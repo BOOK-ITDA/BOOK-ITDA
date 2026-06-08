@@ -31,6 +31,7 @@ public class MainUi {
                 if (userId != -1) { //로그인 성공하면
                     new LibraryUi().showLibraryScreen();
                 }
+                else showMainScreen();
                 break;
             case 3:
                 System.out.println("사서 로그인 기능을 선택하셨습니다.");

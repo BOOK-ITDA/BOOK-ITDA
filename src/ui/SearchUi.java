@@ -137,8 +137,8 @@ public class SearchUi {
                 BTRUi branchTransferUI = new BTRUi();
                 boolean success = branchTransferUI.showBranchTransferScreen(
                         userId,
-                        selected.getBook_id(),          // selected에서 꺼내기
-                        selected.getLibrary_id()        // selected에서 꺼내기
+                        selected.getBook_id(),
+                        selected.getLibrary_id()
                 );
                 if (!success) handleAvailableBook(selected);
                 else new LibraryUi().showLibraryScreen();
