@@ -11,7 +11,4 @@ public interface ReservationRecordRepository {
 
     // 예약 기록 조회 - 회원 대시보드용
     List<ReservationRecordDto> findByUserId(Connection conn, int user_id);
-
-    List<ReservationRecordDto> getReservation() throws SQLException;
-    void updateStatus(int ReservationId) throws SQLException;
 }

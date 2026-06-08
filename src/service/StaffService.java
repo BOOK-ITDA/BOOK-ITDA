@@ -59,14 +59,6 @@ public class StaffService {
         smartLibReqDao.updateStatus(smartReqId);
     }
 
-    public List<ReservationRecordDto> getReservation() throws SQLException {
-        return reservationDao.getReservation();
-    }
-
-    public void updateReservationStatus(int reservationId) throws SQLException {
-        reservationDao.updateStatus(reservationId);
-    }
-
     public List<OverdueRecordDto> getOverdue() throws SQLException {
         return overdueRecordDao.getOverdue();
     }

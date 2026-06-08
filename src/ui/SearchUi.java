@@ -1,9 +1,6 @@
 package ui;
 
-import dao.CollectionDao;
-import dao.LoanRecordDao;
-import dao.OverdueRecordDao;
-import dao.UserDao;
+import dao.*;
 import dto.BookDto;
 import repository.CollectionRepository;
 import repository.OverdueRecordRepository;
