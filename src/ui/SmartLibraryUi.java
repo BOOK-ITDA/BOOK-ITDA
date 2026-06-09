@@ -59,44 +59,44 @@ public class SmartLibraryUi {
                     lib.getBook_capacity(),
                     lib.getBook_count());
         }
+        while (true) {
+            System.out.print("\n수령할 스마트도서관ID를 입력하세요 (취소: 0) : ");
+            int smartLibId;
+            try {
+                smartLibId = Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("올바른 번호를 입력해주세요.");
+                continue;
+            }
 
-        System.out.print("\n수령할 스마트도서관ID를 입력하세요 (취소: 0) : ");
-        int smartLibId;
-        try {
-            smartLibId = Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            System.out.println("올바른 번호를 입력해주세요.");
-            showSmartLibraryScreen(userId, bookId, libraryId);
-            return false;
-        }
+            // 취소
+            if (smartLibId == 0) {
+                System.out.println("이전 화면으로 돌아갑니다.");
+                return false;
+            }
 
-        // 취소
-        if (smartLibId == 0) {
-            System.out.println("이전 화면으로 돌아갑니다.");
-            return false;
-        }
+            // 입력한 ID가 목록에 있는지 검사
+            boolean valid = false;
+            for (SmartLibraryDto lib : smartLibList) {
+                if (lib.getSmart_lib_id() == smartLibId) {
+                    valid = true;
+                    break;
+                }
+            }
+            if (!valid) {
+                System.out.println("없는 스마트도서관ID입니다. 다시 선택해 주세요.");
+                continue;
+            }
 
-        // 입력한 ID가 목록에 있는지 검사
-        boolean valid = false;
-        for (SmartLibraryDto lib : smartLibList) {
-            if (lib.getSmart_lib_id() == smartLibId) {
-                valid = true;
-                break;
+            // 신청 처리
+            try {
+                smartLibReqService.requestSmartLibReq(userId, bookId, libraryId, smartLibId);
+                return true;
+            } catch (SQLException e) {
+                System.out.println("[오류] 스마트도서관 대출 신청 중 오류가 발생했습니다.");
+                e.printStackTrace();
+                return false;
             }
         }
-        if (!valid) {
-            System.out.println("없는 스마트도서관ID입니다. 다시 선택해 주세요.");
-            showSmartLibraryScreen(userId, bookId, libraryId);
-            return false;
-        }
-
-        // 신청 처리
-        try {
-            smartLibReqService.requestSmartLibReq(userId, bookId, libraryId, smartLibId);
-        } catch (SQLException e) {
-            System.out.println("[오류] 스마트도서관 대출 신청 중 오류가 발생했습니다.");
-            e.printStackTrace();
-        }
-        return false;
     }
 }
