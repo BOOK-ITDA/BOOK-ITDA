@@ -19,4 +19,5 @@ public interface BranchTransferRepository {
     void updateStatus(int transferReqId) throws SQLException;
     List<BranchTransferDto> findByUserId(int userId) throws SQLException;
 
+    boolean hasAvailableRequest(Connection conn, int userId, int bookId, int holdingLibId);
 }

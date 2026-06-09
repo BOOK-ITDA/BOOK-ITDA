@@ -66,7 +66,27 @@ public class ReservationRecordDao implements ReservationRecordRepository {
         return list; // 예약 기록 없으면 빈 리스트 반환
     }
 
-
+    @Override
+    // 예약자 본인 여부 확인
+    // 조건: 해당 회원이 해당 도서(book_id + library_id)에 대해
+    //       status = 'AVAILABLE'인 예약 기록이 있으면 true 반환
+    // SearchUi에서 RESERVED 도서 선택 시 대출 가능 여부 판단에 사용
+    public boolean hasAvailableReservation(Connection conn, int userId, int bookId, int libraryId) {
+        String sql = "SELECT COUNT(*) FROM reservation_record " +
+                "WHERE user_id = ? AND book_id = ? AND library_id = ? AND status = 'AVAILABLE'";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, bookId);
+            pstmt.setInt(3, libraryId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("DAO 에러 발생 : " + e.getMessage());
+            throw new RuntimeException("예약 가능 여부 확인 중 DB 오류", e);
+        }
+        return false;
+    }
 
 
 

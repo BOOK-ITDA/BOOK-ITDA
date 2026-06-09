@@ -176,7 +176,22 @@ public class BranchTransferDao implements BranchTransferRepository {
         return list;
     }
 
-
+    @Override
+    public boolean hasAvailableRequest(Connection conn, int userId, int bookId, int holdingLibId) {
+        String sql = "SELECT COUNT(*) FROM BRANCH_TRANSFER_REQUEST " +
+                "WHERE user_id = ? AND book_id = ? AND holding_lib_id = ? AND status = 'AVAILABLE'";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, bookId);
+            pstmt.setInt(3, holdingLibId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("분관 신청 가능 여부 확인 중 DB 오류", e);
+        }
+        return false;
+    }
 
 
 }
