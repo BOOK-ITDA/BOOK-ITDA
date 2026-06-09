@@ -35,36 +35,42 @@ public class ExtendUi {
             System.out.println("--------------------------------------------");
         }
 
-        System.out.print("연장하고 싶은 대출 기록 ID를 선택하세요 (취소 : 0) : ");
-        int choiceLoanId = scanner.nextInt();
-        scanner.nextLine();
+        while(true) {
+            try {
+                System.out.print("연장하고 싶은 대출 기록 ID를 선택하세요 (취소 : 0) : ");
+                int choiceLoanId = scanner.nextInt();
+                scanner.nextLine();
 
-        if (choiceLoanId == 0){
-            System.out.println("연장 기능 실행을 취소하고 이전 메뉴로 돌아갑니다. ");
-            return;
-        }
-        LoanRecordDto selectedLoan = null;
-        for (LoanRecordDto loanRecordDto : loaningList){
-            if (loanRecordDto.getLoan_id() == choiceLoanId){
-                selectedLoan = loanRecordDto;
-                break;
+                if (choiceLoanId == 0) {
+                    System.out.println("연장 기능 실행을 취소하고 이전 메뉴로 돌아갑니다. ");
+                    return;
+                }
+                LoanRecordDto selectedLoan = null;
+                for (LoanRecordDto loanRecordDto : loaningList) {
+                    if (loanRecordDto.getLoan_id() == choiceLoanId) {
+                        selectedLoan = loanRecordDto;
+                        break;
+                    }
+                }
+
+                if (selectedLoan == null) {
+                    System.out.println("에러 : 현재 대출 중인 목록에 없는 번호입니다.");
+                    continue;
+                }
+                int extensionCount = extendService.extendProcess(
+                        user_id, selectedLoan.getBook_id(), selectedLoan.getLibrary_id(), choiceLoanId
+                );
+                System.out.println("연장이 정상적으로 완료되었습니다. (해당 도서 연장 횟수 : " + extensionCount + " )");
+                return;
+            } catch (IllegalStateException e) {
+                System.out.println("연장 실패 : " + e.getMessage());
+            } catch (java.util.InputMismatchException e) {
+                System.out.println("[오류] 숫자만 입력해 주세요.");
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("시스템 에러 발생 : " + e.getMessage());
+                return;
             }
-        }
-
-        if (selectedLoan == null){
-            System.out.println("에러 : 현재 대출 중인 목록에 없는 번호입니다.");
-            return;
-            // 돌아가는 화면 UI 추가
-        }
-        try {
-            int extensionCount = extendService.extendProcess(
-                    user_id, selectedLoan.getBook_id(), selectedLoan.getLibrary_id(), choiceLoanId
-            );
-            System.out.println("연장이 정상적으로 완료되었습니다. (해당 도서 연장 횟수 : "+extensionCount+" )");
-        } catch(IllegalStateException e){
-            System.out.println("연장 실패 : " + e.getMessage());
-        } catch (Exception e){
-            System.out.println("시스템 에러 발생 : " + e.getMessage());
         }
     }
 }

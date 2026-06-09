@@ -35,37 +35,44 @@ public class ReturnUi {
                         l.getExtension_count());
             }
 
-            System.out.println("===================================================================");
-            System.out.println("[1] 반납하기");
-            System.out.println("[0] 뒤로가기");
-            System.out.println("===================================================================");
-            System.out.print("기능 선택 : ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            while(true) {
+                System.out.println("===================================================================");
+                System.out.println("[1] 반납하기");
+                System.out.println("[0] 뒤로가기");
+                System.out.println("===================================================================");
+                System.out.print("기능 선택 : ");
 
-            switch (choice) { //반납을 희망하는 대출기록 아이디 입력
-                case 1:
-                    System.out.print("반납할 대출기록ID를 입력하세요 : ");
-                    int loanId = scanner.nextInt();
+                try {
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+
+                switch (choice) { //반납을 희망하는 대출기록 아이디 입력
+                    case 1:
+                        System.out.print("반납할 대출기록ID를 입력하세요 : ");
+                        int loanId = scanner.nextInt();
+                        scanner.nextLine();
+
+                        boolean result = returnBookService.returnBook(loanId, userId); //반납하기 서비스
+                        if (result) {
+                            System.out.println("반납이 완료되었습니다.");
+                            return;
+                        } else {
+                            System.out.println("반납에 실패했습니다. 대출기록ID를 확인해주세요.");
+                            continue;
+                        }
+                    case 0:
+                        System.out.println("이전 화면으로 돌아갑니다.");
+                        return;
+                    default:
+                        System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
+                        showReturnBookScreen(userId);
+                        break;
+                }
+                } catch (java.util.InputMismatchException e) {
+                    System.out.println("[오류] 숫자만 입력해 주세요.");
                     scanner.nextLine();
-
-                    boolean result = returnBookService.returnBook(loanId, userId); //반납하기 서비스
-                    if (result) {
-                        System.out.println("반납이 완료되었습니다.");
-                    } else {
-                        System.out.println("반납에 실패했습니다. 대출기록ID를 확인해주세요.");
-                    }
-                    showReturnBookScreen(userId);
-                    break;
-                case 0:
-                    System.out.println("이전 화면으로 돌아갑니다.");
-                    return;
-                default:
-                    System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
-                    showReturnBookScreen(userId);
-                    break;
+                }
             }
-
         } catch (SQLException e) {
             System.out.println("[오류] 대출 목록 조회 중 오류가 발생했습니다.");
             e.printStackTrace();

@@ -39,39 +39,38 @@ public class BTRUi {
                         lib.getAddress());
             }
 
-            System.out.print("\n수령할 도서관ID를 입력하세요 (취소: 0) : "); //수령 원하는 도서관 아이디 입력
-            int pickupLibId;
+            while (true) {
+                System.out.print("\n수령할 도서관ID를 입력하세요 (취소: 0) : "); //수령 원하는 도서관 아이디 입력
+                int pickupLibId;
 
-            try {
-                pickupLibId = Integer.parseInt(scanner.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("올바른 번호를 입력해주세요.");
-                showBranchTransferScreen(userId, bookId, holdingLibId);
-                return false;
-            }
-
-            if (pickupLibId == 0) {
-                System.out.println("이전 화면으로 돌아갑니다.");
-                return false;
-            }
-
-            // 입력한 아이디가 목록에 있는지 확인
-            boolean valid = false;
-            for (LibraryDto lib : libList) {
-                if (lib.getLibrary_id() == pickupLibId) {
-                    valid = true;
-                    break;
+                try {
+                    pickupLibId = Integer.parseInt(scanner.nextLine().trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("올바른 번호를 입력해주세요.");
+                    continue;
                 }
-            }
-            if (!valid) {
-                System.out.println("없는 도서관ID입니다. 다시 선택해 주세요.");
-                showBranchTransferScreen(userId, bookId, holdingLibId);
-                return false;
-            }
-            //입력한 아이디가 존재하면 바로 서비스 호출 및 다음 단계 실행(연체 여부 확인 -> 분관신청 삽입 -> 소장 테이블 예약중으로 변경)
-            branchTransferService.requestBranchTransfer(userId, bookId, holdingLibId, pickupLibId);
-            return true;
 
+                if (pickupLibId == 0) {
+                    System.out.println("이전 화면으로 돌아갑니다.");
+                    return false;
+                }
+
+                // 입력한 아이디가 목록에 있는지 확인
+                boolean valid = false;
+                for (LibraryDto lib : libList) {
+                    if (lib.getLibrary_id() == pickupLibId) {
+                        valid = true;
+                        break;
+                    }
+                }
+                if (!valid) {
+                    System.out.println("없는 도서관ID입니다. 다시 선택해 주세요.");
+                    continue;
+                }
+                //입력한 아이디가 존재하면 바로 서비스 호출 및 다음 단계 실행(연체 여부 확인 -> 분관신청 삽입 -> 소장 테이블 예약중으로 변경)
+                branchTransferService.requestBranchTransfer(userId, bookId, holdingLibId, pickupLibId);
+                return true;
+            }
         } catch (SQLException e) {
             String message = e.getMessage();
             Throwable cause = e.getCause();
