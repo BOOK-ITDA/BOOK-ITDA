@@ -27,7 +27,6 @@ public class ViewBTRUi {
             if (list.isEmpty()) {
                 System.out.println("분관 대출 신청 기록이 없습니다.");
                 return;
-                //회원 대시보드로 return하는 부분 추가 예정!!!
             }
             System.out.printf("%-8s %-15s %-25s %-25s %-25s%n",
                     "신청ID", "도서명", "소장도서관", "수령도서관", "처리상태");
@@ -50,7 +49,7 @@ public class ViewBTRUi {
 
             if (choice == 0) {
                 System.out.println("이전 화면으로 돌아갑니다.");
-                //return 회원 대시보드!!!!! 추가!!!!!
+                return;
             } else {
                 System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
                 showBranchTransferRecord(userId);

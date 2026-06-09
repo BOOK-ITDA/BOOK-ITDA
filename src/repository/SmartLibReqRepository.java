@@ -18,4 +18,6 @@ public interface SmartLibReqRepository {
 
     List<SmartLibReqDto> getSmartReq() throws SQLException;
     void updateStatus(int smartReqId) throws SQLException;
+
+    boolean hasAvailableRequest(Connection conn, int userId, int bookId, int libraryId);
 }

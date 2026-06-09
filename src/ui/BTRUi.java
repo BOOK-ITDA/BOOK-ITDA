@@ -44,6 +44,13 @@ public class BTRUi {
                 int pickupLibId = scanner.nextInt();
                 scanner.nextLine();
 
+                try {
+                    pickupLibId = Integer.parseInt(scanner.nextLine().trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("올바른 번호를 입력해주세요.");
+                    continue;
+                }
+
                 if (pickupLibId == 0) {
                     System.out.println("이전 화면으로 돌아갑니다.");
                     return false;
@@ -66,11 +73,14 @@ public class BTRUi {
                 return true;
             }
         } catch (SQLException e) {
-            System.out.println("[오류] 분관 대출 신청 중 오류가 발생했습니다.");
-            e.printStackTrace();
-        } catch (java.util.InputMismatchException e) {
-            System.out.println("[오류] 숫자만 입력해주세요.");
-            scanner.nextLine();
+            String message = e.getMessage();
+            Throwable cause = e.getCause();
+            if ((message != null && message.contains("소장 도서관과 수령 도서관이 동일해 분관 대출 신청 불가합니다.")) ||
+                    (cause != null && cause.getMessage() != null && cause.getMessage().contains("소장 도서관과 수령 도서관이 동일합니다."))) {
+                System.out.println("[안내] 소장 도서관과 수령 도서관이 동일합니다. 다른 도서관을 선택해 주세요.");
+            } else {
+                System.out.println("[안내] 소장 도서관과 수령 도서관이 동일해 분관 대출 신청 불가합니다.");
+            }
         }
         return false;
     }

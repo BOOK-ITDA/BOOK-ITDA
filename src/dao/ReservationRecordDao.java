@@ -67,63 +67,25 @@ public class ReservationRecordDao implements ReservationRecordRepository {
     }
 
     @Override
-    public List<ReservationRecordDto> getReservation() throws SQLException { //사서 예약 기록 조회
-        String sql = "SELECT rr.reserve_id, rr.user_id, rr.book_id, b.name AS book_name, rr.library_id, rr.reserve_date, rr.status " +
-                "FROM RESERVATION_RECORD rr " +
-                "JOIN BOOK b ON rr.book_id = b.book_id";
-
-        List<ReservationRecordDto> list = new ArrayList<>();
-
-        try (Connection conn = DatabaseConnector.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-
-            while (rs.next()) {
-                ReservationRecordDto bt = new ReservationRecordDto(
-                        rs.getInt("reserve_id"),
-                        rs.getInt("user_id"),
-                        rs.getInt("book_id"),
-                        rs.getString("book_name"),
-                        rs.getInt("library_id"),
-                        rs.getDate("reserve_date").toLocalDate(),
-                        rs.getString("status")
-                );
-                list.add(bt);
+    // 예약자 본인 여부 확인
+    // 조건: 해당 회원이 해당 도서(book_id + library_id)에 대해
+    //       status = 'AVAILABLE'인 예약 기록이 있으면 true 반환
+    // SearchUi에서 RESERVED 도서 선택 시 대출 가능 여부 판단에 사용
+    public boolean hasAvailableReservation(Connection conn, int userId, int bookId, int libraryId) {
+        String sql = "SELECT COUNT(*) FROM reservation_record " +
+                "WHERE user_id = ? AND book_id = ? AND library_id = ? AND status = 'AVAILABLE'";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, bookId);
+            pstmt.setInt(3, libraryId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new SQLException("예약 기록 조회 중 오류 발생", e);
+            System.out.println("DAO 에러 발생 : " + e.getMessage());
+            throw new RuntimeException("예약 가능 여부 확인 중 DB 오류", e);
         }
-
-        return list;
-    }
-
-    @Override
-    public void updateStatus(int reservationId) throws SQLException { //사서 예약 기록 변경
-        String checkSql = "SELECT status FROM RESERVATION_RECORD WHERE reserve_id = ?";
-        try (Connection conn = DatabaseConnector.getConnection();
-             PreparedStatement checkPstmt = conn.prepareStatement(checkSql)) {
-            checkPstmt.setInt(1, reservationId);
-            try (ResultSet rs = checkPstmt.executeQuery()) {
-                if (rs.next()) {
-                    if (rs.getString("status").equals("AVAILABLE")) {
-                        System.out.println("이미 처리된 예약입니다.");
-                        return;
-                    }
-                } else {
-                    System.out.println("존재하지 않는 예약ID입니다.");
-                    return;
-                }
-            }
-        }
-
-        String sql = "UPDATE RESERVATION_RECORD SET status = 'AVAILABLE' WHERE reserve_id = ?";
-        try (Connection conn = DatabaseConnector.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, reservationId);
-            pstmt.executeUpdate();
-            System.out.println("상태 변경 완료");
-        }
+        return false;
     }
 
 

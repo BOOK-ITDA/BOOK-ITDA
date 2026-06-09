@@ -28,8 +28,7 @@ public class StaffUi {
         System.out.println("[1] 전체 회원 조회");
         System.out.println("[2] 분관 대출 신청 관리");
         System.out.println("[3] 스마트 도서관 신청 관리");
-        System.out.println("[4] 예약 기록 관리");
-        System.out.println("[5] 연체 기록 관리");
+        System.out.println("[4] 연체 기록 관리");
         System.out.println("[0] 로그아웃");
         System.out.println("=============================");
         System.out.print("기능 선택 : ");
@@ -41,8 +40,7 @@ public class StaffUi {
             case 1: handleAllUsers();       break;
             case 2: handleBranchTransfer(); break;
             case 3: handleSmartLibReq();    break;
-            case 4: handleReservation();    break;
-            case 5: handleOverdue();        break;
+            case 4: handleOverdue();        break;
             case 0: Session.logout();
                 System.out.println("로그아웃 되었습니다.");
                 return;
@@ -196,65 +194,6 @@ public class StaffUi {
 
         } catch (SQLException e) {
             System.out.println("[오류] 스마트 도서관 신청 조회 중 오류가 발생했습니다.");
-            e.printStackTrace();
-        }
-    }
-
-    private void handleReservation() {
-        System.out.println("\n=================================== 예약 기록 목록 ===================================");
-        try {
-            List<ReservationRecordDto> list = staffService.getReservation();
-            if (list.isEmpty()) {
-                System.out.println("예약 기록이 없습니다.");
-                showStaffScreen();
-                return;
-            }
-            System.out.printf("%-8s %-8s %-10s %-13s %-15s %-12s%n",
-                    "예약ID", "회원ID", "도서명", "도서관ID", "예약날짜", "처리상태");
-            System.out.println("-".repeat(80));
-            for (ReservationRecordDto r : list) {
-                System.out.printf("%-8d %-8d %-15s %-10d %-18s %-12s%n",
-                        r.getReserve_id(),
-                        r.getUser_id(),
-                        r.getBook_name(),
-                        r.getLibrary_id(),
-                        r.getReserve_date(),
-                        r.getStatus());
-            }
-
-            System.out.println("==============================================================================");
-            System.out.println("[1] 예약 상태 변경 (PROCESSING → AVAILABLE)");
-            System.out.println("[0] 뒤로가기");
-            System.out.println("==============================================================================");
-            System.out.print("기능 선택 : ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (choice) {
-                case 1:
-                    System.out.print("상태를 변경할 예약ID를 입력하세요 : ");
-                    int reservationId = scanner.nextInt();
-                    scanner.nextLine();
-                    try {
-                        staffService.updateReservationStatus(reservationId);
-                        System.out.println("예약 기록 [ID: " + reservationId + "] 상태가 변경되었습니다.");
-                    } catch (SQLException e) {
-                        System.out.println("[오류] 상태 변경 중 오류가 발생했습니다.");
-                        e.printStackTrace();
-                    }
-                    handleReservation();
-                    break;
-                case 0:
-                    showStaffScreen();
-                    break;
-                default:
-                    System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
-                    handleReservation();
-                    break;
-            }
-
-        } catch (SQLException e) {
-            System.out.println("[오류] 예약 기록 조회 중 오류가 발생했습니다.");
             e.printStackTrace();
         }
     }

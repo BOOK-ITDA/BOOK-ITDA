@@ -30,15 +30,6 @@ public class ReservationRecordDto {
         this.status = status;
     }
 
-    public ReservationRecordDto(int reserve_id, int user_id, int book_id, int library_id, LocalDate reserve_date, String status) {
-        this.reserve_id = reserve_id;
-        this.user_id = user_id;
-        this.book_id = book_id;
-        this.library_id = library_id;
-        this.reserve_date = reserve_date;
-        this.status = status;
-    }
-
     // JOIN 조회용 필드 추가 (DB 컬럼 아님, SELECT 결과 담는 용도)
     private String library_name;
 

@@ -186,8 +186,15 @@ public class LoanRecordDao implements LoanRecordRepository {
                 pstmt.setInt(1, loanId);
                 pstmt.executeUpdate();
             }
+            //3. user -> loan count(대출권수 -1)
+            String updateLoanCount =
+                    "UPDATE USER SET loan_count = loan_count - 1 WHERE user_id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(updateLoanCount)) {
+                pstmt.setInt(1, userId);
+                pstmt.executeUpdate();
+            }
 
-            // 3. 소장 테이블 상태 확인
+            // 4. 소장 테이블 상태 확인
             String findCollectionSql =
                     "SELECT status FROM COLLECTION WHERE book_id = ? AND library_id = ?";
 
@@ -202,7 +209,7 @@ public class LoanRecordDao implements LoanRecordRepository {
             }
 
             if ("BORROWED".equals(collectionStatus)) {
-                // 4-1. 단순 반납 -> 대출 가능으로 변경
+                // 5-1. 단순 반납 -> 대출 가능으로 변경
                 String updateCollectionSql =
                         "UPDATE COLLECTION SET status = 'AVAILABLE' " +
                                 "WHERE book_id = ? AND library_id = ?";
@@ -213,7 +220,7 @@ public class LoanRecordDao implements LoanRecordRepository {
                 }
 
             } else if ("RESERVED".equals(collectionStatus)) {
-                // 4-2. 예약 테이블 확인
+                // 5-2. 예약 테이블 확인
                 String findReserveSql =
                         "SELECT reserve_id FROM RESERVATION_RECORD " +
                                 "WHERE book_id = ? AND library_id = ? AND status = 'PROCESSING'";
