@@ -34,34 +34,40 @@ public class DashBoardUi {
     }
 
     public void showDashBoardScreen() {
-        System.out.println("\n=============================");
-        System.out.println("         대시보드");
-        System.out.println("=============================");
-        System.out.println("[1] 대출 중인 도서 조회");
-        System.out.println("[2] 연체 여부 확인");
-        System.out.println("[3] 일반 예약 목록 조회");
-        System.out.println("[4] 스마트 도서관 대출 신청 목록 조회");
-        System.out.println("[5] 분관 대출 신청 목록 조회");
-        System.out.println("[0] 뒤로가기");
-        System.out.println("=============================");
-        System.out.print("메뉴 선택 : ");
+        while (true) {
+            System.out.println("\n=============================");
+            System.out.println("         대시보드");
+            System.out.println("=============================");
+            System.out.println("[1] 대출 중인 도서 조회");
+            System.out.println("[2] 연체 여부 확인");
+            System.out.println("[3] 일반 예약 목록 조회");
+            System.out.println("[4] 스마트 도서관 대출 신청 목록 조회");
+            System.out.println("[5] 분관 대출 신청 목록 조회");
+            System.out.println("[0] 뒤로가기");
+            System.out.println("=============================");
+            System.out.print("메뉴 선택 : ");
 
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+            try {
+                int choice = scanner.nextInt();
+                scanner.nextLine();
 
-        switch (choice) {
-            case 1: handleActiveLoans();      break;
-            case 2: handleOverdueRecords();   break;
-            case 3: handleReservations();     break;
-            case 4: handleSmartLibReqs();     break;
-            case 5: handleBranchTransfers();  break;
-            case 0:
-                System.out.println("도서관 메뉴로 돌아갑니다.");
-                return; // LibraryUi로 복귀
-            default:
-                System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
-                showDashBoardScreen();
-                break;
+                switch (choice) {
+                    case 1: handleActiveLoans(); waitForEnter(); break;
+                    case 2: handleOverdueRecords(); waitForEnter(); break;
+                    case 3: handleReservations(); waitForEnter(); break;
+                    case 4: handleSmartLibReqs(); waitForEnter(); break;
+                    case 5: handleBranchTransfers(); waitForEnter(); break;
+                    case 0:
+                        System.out.println("도서관 메뉴로 돌아갑니다.");
+                        return; // LibraryUi로 복귀
+                    default:
+                        System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
+                        break;
+                }
+            } catch (java.util.InputMismatchException e) {
+                System.out.println("[오류] 숫자만 입력해 주세요.");
+                scanner.nextLine();
+            }
         }
     }
 
@@ -95,7 +101,6 @@ public class DashBoardUi {
             System.out.println("[오류] 대출 목록 조회 중 오류가 발생했습니다.");
             e.printStackTrace();
         }
-        showDashBoardScreen();
     }
 
     // ─────────────────────────────────────────
@@ -127,7 +132,6 @@ public class DashBoardUi {
             System.out.println("[오류] 연체 내역 조회 중 오류가 발생했습니다.");
             e.printStackTrace();
         }
-        showDashBoardScreen();
     }
 
     // ─────────────────────────────────────────
@@ -158,7 +162,6 @@ public class DashBoardUi {
             System.out.println("[오류] 예약 목록 조회 중 오류가 발생했습니다.");
             e.printStackTrace();
         }
-        showDashBoardScreen();
     }
 
     // ─────────────────────────────────────────
@@ -188,7 +191,6 @@ public class DashBoardUi {
             System.out.println("[오류] 스마트 도서관 신청 목록 조회 중 오류가 발생했습니다.");
             e.printStackTrace();
         }
-        showDashBoardScreen();
     }
 
     // ─────────────────────────────────────────
@@ -221,6 +223,11 @@ public class DashBoardUi {
             System.out.println("[오류] 분관 대출 신청 목록 조회 중 오류가 발생했습니다.");
             e.printStackTrace();
         }
-        showDashBoardScreen();
+    }
+
+    private void waitForEnter() {
+        System.out.print("\n메뉴로 돌아가려면 엔터(Enter) 키를 누르세요.");
+        Scanner scanner = new Scanner(System.in);
+        scanner.nextLine();
     }
 }
