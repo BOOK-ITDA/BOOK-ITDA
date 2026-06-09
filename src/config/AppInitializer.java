@@ -13,8 +13,11 @@ public class AppInitializer {
     public static void init() {
         // 전화번호 중복 확인 트리거 생성
         try (Connection conn = DatabaseConnector.getConnection()) {
+            //전화번호 중복 방지 트리거
             UserDao userDao = new UserDao();
             userDao.createTriggerIfNotExists(conn);
+
+            //분관대출 신청 트리거
             BranchTransferDao branchTransferDao = new BranchTransferDao();
             branchTransferDao.createBranchTransferTrigger(conn);
         } catch (SQLException e) {

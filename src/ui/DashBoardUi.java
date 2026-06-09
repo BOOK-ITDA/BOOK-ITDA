@@ -196,5 +196,6 @@ public class DashBoardUi {
     // ─────────────────────────────────────────
     private void handleBranchTransfers() {
         new ViewBTRUi().showBranchTransferRecord(userId);
+        showDashBoardScreen();
     }
 }
