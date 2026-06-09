@@ -138,8 +138,8 @@ public class SearchUi {
                 BTRUi branchTransferUI = new BTRUi();
                 boolean success = branchTransferUI.showBranchTransferScreen(
                         userId,
-                        selected.getBook_id(),          // selected에서 꺼내기
-                        selected.getLibrary_id()        // selected에서 꺼내기
+                        selected.getBook_id(),
+                        selected.getLibrary_id()
                 );
                 if (!success) handleAvailableBook(selected);
                 else new LibraryUi().showLibraryScreen();
@@ -147,11 +147,13 @@ public class SearchUi {
             case 3:
                 System.out.println("스마트 도서관 대출 신청하기 기능을 선택하셨습니다.");
                 SmartLibraryUi smartLibraryUi = new SmartLibraryUi();
-                smartLibraryUi.showSmartLibraryScreen(
+                boolean smtSuccess = smartLibraryUi.showSmartLibraryScreen(
                         Session.getUserId(),
                         selected.getBook_id(),
                         selected.getLibrary_id()
                 );
+                if (!smtSuccess) handleAvailableBook(selected);
+                else new LibraryUi().showLibraryScreen();
                 break;
             default:
                 System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");

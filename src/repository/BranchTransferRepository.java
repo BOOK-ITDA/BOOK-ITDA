@@ -14,6 +14,7 @@ public interface BranchTransferRepository {
     //3. 분관대출 목록 조회(회원-대시보드) -> 콘솔창에 버튼 입력하면 해당 함수가 실행될 수 있도록(SELECT)
 
     public int requestBranchTransfer(Connection conn, int userId, int bookId, int holdingLibId, int pickupLibId) throws SQLException;
+    void createBranchTransferTrigger(Connection conn);
     List<BranchTransferDto> getBranchTransfer() throws SQLException;
     void updateStatus(int transferReqId) throws SQLException;
     List<BranchTransferDto> findByUserId(int userId) throws SQLException;
