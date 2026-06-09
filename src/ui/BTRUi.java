@@ -41,8 +41,7 @@ public class BTRUi {
 
             while (true) {
                 System.out.print("\n수령할 도서관ID를 입력하세요 (취소: 0) : "); //수령 원하는 도서관 아이디 입력
-                int pickupLibId = scanner.nextInt();
-                scanner.nextLine();
+                int pickupLibId;
 
                 try {
                     pickupLibId = Integer.parseInt(scanner.nextLine().trim());

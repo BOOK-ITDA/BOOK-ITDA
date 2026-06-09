@@ -40,19 +40,24 @@ public class ViewBTRUi {
                         b.getStatus());
             }
 
-            System.out.println("======================================================================================================");
-            System.out.println("[0] 뒤로가기");
-            System.out.println("======================================================================================================");
-            System.out.print("기능 선택 : ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
-
-            if (choice == 0) {
-                System.out.println("이전 화면으로 돌아갑니다.");
-                return;
-            } else {
-                System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
-                showBranchTransferRecord(userId);
+            while(true) {
+                System.out.println("======================================================================================================");
+                System.out.println("[0] 뒤로가기");
+                System.out.println("======================================================================================================");
+                System.out.print("기능 선택 : ");
+                int choice;
+                try {
+                    choice = Integer.parseInt(scanner.nextLine().trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("올바른 번호를 입력해주세요.");
+                    continue;
+                }
+                if (choice == 0) {
+                    System.out.println("이전 화면으로 돌아갑니다.");
+                    return;
+                } else {
+                    System.out.println("없는 메뉴입니다. 다시 선택해 주세요.");
+                }
             }
 
         } catch (SQLException e) {
