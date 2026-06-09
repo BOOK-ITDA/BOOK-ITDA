@@ -21,15 +21,20 @@ public class LoanService {
         this.loanRecordRepository = loanRecordRepository;
     }
 
-    public int loanProcess(int user_id, int book_id, int library_id){
+    public int loanProcess(int user_id, int book_id, int library_id, boolean isReservee){
         try (Connection conn = DatabaseConnector.getConnection()) {
             try {
                 conn.setAutoCommit(false);
 
                 // 도서 상태 확인
+                // AVAILABLE: 일반 대출
+                // RESERVED + isReservee=true: 예약자 본인 대출
                 String bookStatus = collectionRepository.getStatus(conn, book_id, library_id);
-                if (!"AVAILABLE".equals(bookStatus)){
-                    throw new IllegalStateException("대출 불가 : 해당 도서는 대출 가능하지 않습니다.");
+                if ("BORROWED".equals(bookStatus)) {
+                    throw new IllegalStateException("대출 불가 : 해당 도서는 이미 대출 중입니다.");
+                }
+                if ("RESERVED".equals(bookStatus) && !isReservee) {
+                    throw new IllegalStateException("대출 불가 : 해당 도서는 예약 중입니다.");
                 }
 
                 // 연체료 미납 여부 확인
